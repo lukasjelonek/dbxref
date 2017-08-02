@@ -3,7 +3,7 @@ import argparse
 import os
 
 def main():
-    parser = argparse.ArgumentParser(description='Make bioinformatic observations on aminoacid sequences')
+    parser = argparse.ArgumentParser(description='Lookup locations of database cross references and retrieve them as json')
     parser.set_defaults(func=help)
 
     subparsers = parser.add_subparsers()
@@ -12,8 +12,8 @@ def main():
     #TODO implement
 
     resolve_parser = subparsers.add_parser('resolve')
+    resolve_parser.add_argument('dbxrefs', nargs=argparse.REMAINDER)
     resolve_parser.set_defaults(func=resolve)
-    #TODO implement
 
     retrieve_parser = subparsers.add_parser('retrieve')
     retrieve_parser.set_defaults(func=retrieve)
@@ -32,8 +32,9 @@ def info(args, config):
     print ('info')
 
 def resolve(args, config):
-    #TODO implement
-    print ('resolve')
+    from dbxref import resolver
+    import json
+    print(json.dumps(resolver.resolve(args.dbxrefs)))
 
 def retrieve(args, config):
     #TODO implement

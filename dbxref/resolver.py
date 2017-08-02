@@ -1,6 +1,5 @@
 def resolve(strings):
     from dbxref.config import load_providers
-    # read providers.json
     providers = load_providers()
     results = []
     for s in strings:
@@ -16,7 +15,7 @@ def resolve(strings):
                         } ) 
             results.append({'dbxref': dbxref['db'] + ':' + dbxref['id'], 'locations': urls})
         else:
-            print("No provider found")
+            results.append({'dbxref': dbxref['db'] + ':' + dbxref['id'], 'locations': []})
     return results
 
 def convert_string_to_dbxref(string):
