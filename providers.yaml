@@ -2,25 +2,32 @@
   prefixes: [EC, Enzyme]
   resources:
       html: ["http://enzyme.expasy.org/EC/%i"]
+  check_existence: "http://enzyme.expasy.org/EC/%i.txt"
 - name: Gene Identifier
   prefixes: [GI]
   resources:
       html: ["http://www.ncbi.nlm.nih.gov/protein/GI:%i"]
       xml: ["http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=protein&dopt=xml&sort=&val=%i&retmode=file"]
+  # does not work
+  # check_existence: "http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=protein&dopt=xml&sort=&val=%i&retmode=file"
 - name: Uniprot
   prefixes: ["UniProtKB/TrEMBL", "UniProtKB/Swiss-Prot"]
   resources:
       html: [ "http://www.uniprot.org/uniprot/%i"]
       xml: [ "http://www.uniprot.org/uniprot/%i.xml"]
+  check_existence: "http://www.uniprot.org/uniprot/%i.xml"
 - name: Taxonomy
   prefixes: ["Taxon", "taxon", "taxid"]
   resources:
       html: ["http://www.uniprot.org/taxonomy/%i"]
       xml: ["http://www.uniprot.org/taxonomy/%i.rdf"]
+  check_existence: "http://www.uniprot.org/taxonomy/%i"
 - name: SequenceOntology
   prefixes: ["SO"]
   resources:
       html: ["http://www.sequenceontology.org/browser/current_svn/term/SO:%i"]
+  # does not work
+  # check_existence: "http://www.sequenceontology.org/browser/current_svn/term/SO:%i"
 - name: RFAM
   prefixes: ["RFAM"]
   resources:
@@ -53,6 +60,7 @@
   resources:
       html: ["http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i"]
       xml: ["http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i&format=oboxml"]
+  check_existence: "http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i&format=oboxml"
 - name: HTTP
   prefixes: ["http", "https"]
   resources:

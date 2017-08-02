@@ -13,6 +13,7 @@ def main():
 
     resolve_parser = subparsers.add_parser('resolve')
     resolve_parser.add_argument('dbxrefs', nargs=argparse.REMAINDER)
+    resolve_parser.add_argument('--no_check', '-n', action='store_false', default=True, help="Do not check existence of cross reference")
     resolve_parser.set_defaults(func=resolve)
 
     retrieve_parser = subparsers.add_parser('retrieve')
@@ -34,7 +35,7 @@ def info(args, config):
 def resolve(args, config):
     from dbxref import resolver
     import json
-    print(json.dumps(resolver.resolve(args.dbxrefs)))
+    print(json.dumps(resolver.resolve(args.dbxrefs, check_existence=args.no_check)))
 
 def retrieve(args, config):
     #TODO implement
