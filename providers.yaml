@@ -44,7 +44,7 @@
   prefixes: ["PFAM"]
   resources:
       html: ["http://pfam.xfam.org/family/%i"]
-      xml: ["http://pfam.xfam.org/family/%i?content-type=text%2Fxml"]
+      xml: ["http://pfam.xfam.org/family/%i?output=xml"]
   # does not work
   # check_existence: "http://pfam.xfam.org/family/%i?content-type=text%2Fxml"
 - name: PDB
