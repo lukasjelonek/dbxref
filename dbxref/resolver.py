@@ -18,14 +18,13 @@ def resolve(strings, check_existence=True):
         dbxref = convert_string_to_dbxref(s)
         if exists and dbxref['db'] in providers:
             provider = providers[dbxref['db']]
-            urls = []
-            for r in provider['resources']:
-                for url_template in provider['resources'][r]:
-                    urls.append( {
-                        'type': r,
-                        'url': compile_url(url_template, dbxref)
-                        } ) 
-            results.append({'dbxref': dbxref['db'] + ':' + dbxref['id'], 'locations': urls})
+            locations = {}
+            for _type in provider['resources']:
+                urls = []
+                for url_template in provider['resources'][_type]:
+                    urls.append(compile_url(url_template, dbxref))
+                locations[_type] = urls
+            results.append({'dbxref': dbxref['db'] + ':' + dbxref['id'], 'locations': locations})
     return results
 
 def check_dbxref_exists(string):
