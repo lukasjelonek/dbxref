@@ -1,7 +1,13 @@
 import requests
 import logging
+logger = logging.getLogger(__name__)
+
 from dbxref.config import load_providers
 providers = load_providers()
+
+FOUND='FOUND'
+NOT_FOUND='NOT_FOUND'
+UNSUPPORTED='UNSUPPORTED'
 
 def resolve(strings, check_existence=True):
     results = []
@@ -27,24 +33,31 @@ def check_dbxref_exists(string):
     if dbxref['db'] in providers:
         provider = providers[dbxref['db']]
         urls = []
-        exists = True
+        exists = FOUND
         if 'check_existence' in provider:
             url = compile_url(provider['check_existence'], dbxref)
+            logger.debug('Checking existence of dbxref at "%s"', url)
             exists = check_url_exists(url)
-            if not exists:
-                logging.info('The dbxref "' + string + '" cannot be found. It will be ignored.')
+            if exists == NOT_FOUND:
+                logger.info('The dbxref "%s" cannot be found. It will be ignored.', string)
             return exists
         else:
-            return False
-    return False
+            return UNSUPPORTED
+    return UNSUPPORTED
 
 def compile_url(template, dbxref):
     return template.replace('%i', dbxref['id']).replace('%d', dbxref['db'])
 
 def check_url_exists(url):
-    r = requests.head(url, allow_redirects=True)
-    r.close()
-    return r.status_code <= 400
+    try:
+        r = requests.head(url, allow_redirects=True)
+        r.close()
+        if r.status_code <= 400:
+            return FOUND
+        else:
+            return NOT_FOUND
+    except:
+        return NOT_FOUND
 
 def convert_string_to_dbxref(string):
     """

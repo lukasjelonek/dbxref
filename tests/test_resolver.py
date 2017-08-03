@@ -21,15 +21,48 @@ class TestDbxrefResolve(unittest.TestCase):
         self.assertNotEqual(resolver.resolve(["EC:1.1.1.1"]), [])
 
     def test_check_dbxref_exists(self):
+        import logging
+        from dbxref.resolver import FOUND, NOT_FOUND, UNSUPPORTED
+        logging.basicConfig(level=logging.DEBUG)
+        logging.getLogger().setLevel(logging.WARNING)
+        resolver.logger.setLevel(logging.DEBUG)
         data = [
-                ('GO:1234', False),
-                ('GO:0097281', True),
-                ('SO:1234', False),
-                ('Taxon:hoho', False),
-                ('UniProtKB/Swiss-Prot:abc', False),
-                ('EC:fa', False),
-                ('EC:1.1.1.1', True),
-                ('GI:abc', False),
+                # existent ids
+                ('GO:0097281', FOUND),
+                ('EC:1.1.1.1', FOUND),
+                ('UniProtKB/Swiss-Prot:P12345', FOUND),
+                ('UniProtKB/TrEMBL:A2VB99', FOUND),
+                ('taxon:452271', FOUND),
+                ('pubmed:19037750', FOUND),
+                ('PDB:4AJY', FOUND),
+                ('http://www.google.de', FOUND),
+                ('https://www.google.de', FOUND),
+
+                # non existent ids
+                ('GO:123', NOT_FOUND),
+                ('EC:hoho', NOT_FOUND),
+                ('UniProtKB/Swiss-Prot:45', NOT_FOUND),
+                ('UniProtKB/TrEMBL:99', NOT_FOUND),
+                ('taxon:hoho', NOT_FOUND),
+                ('pubmed:hoho', NOT_FOUND),
+                ('PDB:hoho', NOT_FOUND),
+                ('http://wurst', NOT_FOUND),
+                ('https://wurst', NOT_FOUND),
+
+                # currently unsupported
+                #('GeneID:956582', FOUND),
+                #('GI:731497', FOUND),
+                #('PFAM:PF00002', FOUND),
+                #('RFAM:RF00360', FOUND),
+                #('InterPro:IPR002928', FOUND),
+                #('SO:0000704', FOUND),
+
+                #('InterPro:hoho', NOT_FOUND),
+                #('GI:hoho', NOT_FOUND),
+                #('GeneID:hoho', NOT_FOUND),
+                #('PFAM:hoho', NOT_FOUND),
+                #('RFAM:hoho', NOT_FOUND),
+                #('SO:123', NOT_FOUND),
                 ]
 
         for d in data:

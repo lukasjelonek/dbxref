@@ -33,28 +33,39 @@
   resources:
       html: ["http://rfam.xfam.org/family/%i"]
       xml: ["http://rfam.xfam.org/family/%i?content-type=text%2Fxml"]
+  # does not work
+  # check_existence: "http://rfam.xfam.org/family/%i?content-type=text%2Fxml"
 - name: Pubmed
   prefixes: ["pubmed", "Pubmed"]
   resources:
       html: ["http://www.ncbi.nlm.nih.gov/pubmed/%i"]
+  check_existence: "http://www.ncbi.nlm.nih.gov/pubmed/%i"
 - name: Protein Families
   prefixes: ["PFAM"]
   resources:
       html: ["http://pfam.xfam.org/family/%i"]
+      xml: ["http://pfam.xfam.org/family/%i?content-type=text%2Fxml"]
+  # does not work
+  # check_existence: "http://pfam.xfam.org/family/%i?content-type=text%2Fxml"
 - name: PDB
   prefixes: ["PDB"]
   resources:
       html: ["http://www.rcsb.org/pdb/explore/explore.do?structureId=%i"]
       xml: ["http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=xml&compression=NO&structureId=%i"]
+  check_existence: "http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=xml&compression=NO&structureId=%i"
 - name: InterPro
   prefixes: ["InterPro"]
   resources:
       html: ["http://www.ebi.ac.uk/interpro/entry/%i"]
+  # does not work
+  # check_existence: "http://www.ebi.ac.uk/interpro/entry/%i"
 - name: GeneID
   prefixes: ["GeneID"]
   resources:
       html: ["http://www.ncbi.nlm.nih.gov/gene/%i"]
       xml: ["http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=gene&dopt=xml&sort=&val=%i&retmode=file"]
+  # does not work
+  #  check_existence: "http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=gene&dopt=xml&sort=&val=%i&retmode=file"
 - name: Gene Ontology
   prefixes: ["GO"]
   resources:
@@ -65,3 +76,4 @@
   prefixes: ["http", "https"]
   resources:
       html: ["%d:%i"]
+  check_existence: "%d:%i"
