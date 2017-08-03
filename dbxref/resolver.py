@@ -32,7 +32,7 @@ def check_dbxref_exists(string):
             url = compile_url(provider['check_existence'], dbxref)
             exists = check_url_exists(url)
             if not exists:
-                logging.warning('The dbxref "' + string + '" cannot be found. It will be ignored.')
+                logging.info('The dbxref "' + string + '" cannot be found. It will be ignored.')
             return exists
         else:
             return False
