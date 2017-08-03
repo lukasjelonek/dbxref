@@ -60,9 +60,12 @@ def read_basic(entry):
     protein = entry.find('uniprot:protein', ns)
     recname = protein.find('uniprot:recommendedName', ns)
     fullName = recname.find('uniprot:fullName', ns).text
-    shortName = recname.find('uniprot:shortName', ns).text
+    shortName = recname.find('uniprot:shortName', ns)
 
-    return {'description': shortName + ': ' + fullName}
+    if shortName is not None:
+        return {'description': fullName + '(' + shortName.text + ')'}
+    else:
+        return {'description': fullName }
 
 def read_sequence(entry):
     sequence = entry.find('uniprot:sequence', ns).text
@@ -100,8 +103,10 @@ def read_names(entry):
     recname = protein.find('uniprot:recommendedName', ns)
     recommended_name = {
             'full' : recname.find('uniprot:fullName', ns).text, 
-            'short': recname.find('uniprot:shortName', ns).text
             }
+    short = recname.find('uniprot:shortName', ns)
+    if short is not None:
+        recommended_name['short'] = short.text
     alternative_names = []
     altnames = protein.findall('uniprot:alternativeName', ns)
     for altname in altnames:
