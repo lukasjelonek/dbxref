@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import os
+import logging
 
 def main():
     parser = argparse.ArgumentParser(description='Lookup locations of database cross references and retrieve them as json')
@@ -19,10 +20,13 @@ def main():
 
     retrieve_parser = subparsers.add_parser('retrieve')
     retrieve_parser.set_defaults(func=retrieve)
-    #TODO implement
+    retrieve_parser.add_argument('dbxrefs', nargs=argparse.REMAINDER)
+    retrieve_parser.add_argument('--verbose', '-v', action='store_true', default=True, help="Show debug output")
 
     args = parser.parse_args()
     config = {} # TODO implement
+    if (args.verbose):
+        logging.basicConfig(level=logging.INFO)
     args.parser = parser
     args.func(args, config)
 
@@ -36,14 +40,11 @@ def info(args, config):
 def resolve(args, config):
     from dbxref import resolver
     import json
-    import logging
-    if (args.verbose):
-        logging.basicConfig(level=logging.INFO)
     print(json.dumps(resolver.resolve(args.dbxrefs, check_existence=args.no_check)))
 
 def retrieve(args, config):
-    #TODO implement
-    print ('retrieve')
+    from dbxref import retriever
+    retriever.retrieve(args.dbxrefs)
 
 if __name__ == "__main__":
     main()
