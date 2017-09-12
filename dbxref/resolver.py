@@ -13,7 +13,7 @@ TIMEOUT='TIMEOUT'
 def resolve(strings, check_existence=True):
     results = []
     for s in strings:
-        exists = True
+        exists = FOUND
         if check_existence:
            exists = check_dbxref_exists(s) 
         dbxref = convert_string_to_dbxref(s)
