@@ -8,6 +8,7 @@ providers = load_providers()
 FOUND='FOUND'
 NOT_FOUND='NOT_FOUND'
 UNSUPPORTED='UNSUPPORTED'
+TIMEOUT='TIMEOUT'
 
 def resolve(strings, check_existence=True):
     results = []
@@ -16,7 +17,7 @@ def resolve(strings, check_existence=True):
         if check_existence:
            exists = check_dbxref_exists(s) 
         dbxref = convert_string_to_dbxref(s)
-        if exists and dbxref['db'] in providers:
+        if exists == FOUND and dbxref['db'] in providers:
             provider = providers[dbxref['db']]
             locations = {}
             for _type in provider['resources']:
@@ -37,7 +38,7 @@ def check_dbxref_exists(string):
             url = compile_url(provider['check_existence'], dbxref)
             logger.debug('Checking existence of dbxref at "%s"', url)
             exists = check_url_exists(url)
-            if exists == NOT_FOUND:
+            if exists == NOT_FOUND or exists == TIMEOUT:
                 logger.info('The dbxref "%s" cannot be found. It will be ignored.', string)
             return exists
         else:
@@ -49,14 +50,16 @@ def compile_url(template, dbxref):
 
 def check_url_exists(url):
     try:
-        r = requests.head(url, allow_redirects=True)
+        r = requests.head(url, allow_redirects=True, timeout=1)
         r.close()
         if r.status_code <= 400:
             return FOUND
         else:
+            logger.debug('The server responded with status code: %s', r.status_code)
             return NOT_FOUND
-    except:
-        return NOT_FOUND
+    except requests.exceptions.Timeout as ex:
+        logger.info('Timeout for URL: "%s"', url)
+        return TIMEOUT
 
 def convert_string_to_dbxref(string):
     """
