@@ -15,17 +15,17 @@ def main():
     resolve_parser = subparsers.add_parser('resolve')
     resolve_parser.add_argument('dbxrefs', nargs=argparse.REMAINDER)
     resolve_parser.add_argument('--no_check', '-n', action='store_false', default=True, help="Do not check existence of cross reference")
-    resolve_parser.add_argument('--verbose', '-v', action='store_true', default=True, help="Show debug output")
+    resolve_parser.add_argument('--verbose', '-v', action='store_true', default=False, help="Show debug output")
     resolve_parser.set_defaults(func=resolve)
 
     retrieve_parser = subparsers.add_parser('retrieve')
     retrieve_parser.set_defaults(func=retrieve)
     retrieve_parser.add_argument('dbxrefs', nargs=argparse.REMAINDER)
-    retrieve_parser.add_argument('--verbose', '-v', action='store_true', default=True, help="Show debug output")
+    retrieve_parser.add_argument('--verbose', '-v', action='store_true', default=False, help="Show debug output")
 
     args = parser.parse_args()
     config = {} # TODO implement
-    if (args.verbose):
+    if ('verbose' in vars(args) and args.verbose):
         logging.basicConfig(level=logging.INFO)
     args.parser = parser
     args.func(args, config)
