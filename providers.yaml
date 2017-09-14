@@ -74,7 +74,7 @@
   resources:
       html: ["http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i"]
       xml: ["http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i&format=oboxml"]
-  check_existence: "http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i&format=oboxml"
+  check_existence: "http://purl.obolibrary.org/obo/GO_%i"
 - name: HTTP
   prefixes: ["http", "https"]
   resources:

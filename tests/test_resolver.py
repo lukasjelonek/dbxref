@@ -22,32 +22,32 @@ class TestDbxrefResolve(unittest.TestCase):
 
     def test_check_dbxref_exists(self):
         import logging
-        from dbxref.resolver import FOUND, NOT_FOUND, UNSUPPORTED
+        from dbxref.resolver import STATUS_EXISTS, STATUS_NOT_EXISTS, STATUS_UNSUPPORTED_DB, STATUS_UNKNOWN
         logging.basicConfig(level=logging.DEBUG)
         logging.getLogger().setLevel(logging.WARNING)
         resolver.logger.setLevel(logging.DEBUG)
         data = [
                 # existent ids
-                ('GO:0097281', FOUND),
-                ('EC:1.1.1.1', FOUND),
-                ('UniProtKB/Swiss-Prot:P12345', FOUND),
-                ('UniProtKB/TrEMBL:A2VB99', FOUND),
-                ('taxon:452271', FOUND),
-                ('pubmed:19037750', FOUND),
-                ('PDB:4AJY', FOUND),
-                ('http://www.google.de', FOUND),
-                ('https://www.google.de', FOUND),
+                ('GO:0097281', STATUS_EXISTS),
+                ('EC:1.1.1.1', STATUS_EXISTS),
+                ('UniProtKB/Swiss-Prot:P12345', STATUS_EXISTS),
+                ('UniProtKB/TrEMBL:A2VB99', STATUS_EXISTS),
+                ('taxon:452271', STATUS_EXISTS),
+                ('pubmed:19037750', STATUS_EXISTS),
+                ('PDB:4AJY', STATUS_EXISTS),
+                ('http://www.google.de', STATUS_EXISTS),
+                ('https://www.google.de', STATUS_EXISTS),
 
                 # non existent ids
-                ('GO:123', NOT_FOUND),
-                ('EC:hoho', NOT_FOUND),
-                ('UniProtKB/Swiss-Prot:45', NOT_FOUND),
-                ('UniProtKB/TrEMBL:99', NOT_FOUND),
-                ('taxon:hoho', NOT_FOUND),
-                ('pubmed:hoho', NOT_FOUND),
-                ('PDB:hoho', NOT_FOUND),
-                ('http://wurst', NOT_FOUND),
-                ('https://wurst', NOT_FOUND),
+                ('GO:123', STATUS_NOT_EXISTS),
+                ('EC:hoho', STATUS_NOT_EXISTS),
+                ('UniProtKB/Swiss-Prot:45', STATUS_NOT_EXISTS),
+                ('UniProtKB/TrEMBL:99', STATUS_NOT_EXISTS),
+                ('taxon:hoho', STATUS_NOT_EXISTS),
+                ('pubmed:hoho', STATUS_NOT_EXISTS),
+                ('PDB:hoho', STATUS_NOT_EXISTS),
+                ('http://wurst', STATUS_NOT_EXISTS),
+                ('https://wurst', STATUS_NOT_EXISTS),
 
                 # currently unsupported
                 #('GeneID:956582', FOUND),
