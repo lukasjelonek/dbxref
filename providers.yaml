@@ -1,8 +1,12 @@
 - name: Enzyme
   prefixes: [EC, Enzyme]
   resources:
-      html: ["http://enzyme.expasy.org/EC/%i"]
-  check_existence: "http://enzyme.expasy.org/EC/%i.txt"
+      html: ["https://enzyme.expasy.org/EC/%i"]
+      text: ["https://enzyme.expasy.org/EC/%i.txt"]
+  check_existence: "https://enzyme.expasy.org/EC/%i.txt"
+  retriever:
+      type: 'external'
+      location: 'scripts/retrieve_enzyme.py'
 - name: Gene Identifier
   prefixes: [GI]
   resources:
@@ -29,8 +33,12 @@
   prefixes: ["SO"]
   resources:
       html: ["http://www.sequenceontology.org/browser/current_svn/term/SO:%i"]
+      csv: ["http://www.sequenceontology.org/browser/current_svn/export/term_only/csv_text/SO:%i"]
   # does not work
   # check_existence: "http://www.sequenceontology.org/browser/current_svn/term/SO:%i"
+  retriever:
+      type: 'external'
+      location: 'scripts/retrieve_sequence_ontology.py'
 - name: RFAM
   prefixes: ["RFAM"]
   resources:
@@ -74,7 +82,11 @@
   resources:
       html: ["http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i"]
       xml: ["http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i&format=oboxml"]
+      json: ["https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/GO:%i"]
   check_existence: "http://purl.obolibrary.org/obo/GO_%i"
+  retriever:
+      type: 'external'
+      location: 'scripts/retrieve_gene_ontology.py'
 - name: HTTP
   prefixes: ["http", "https"]
   resources:
