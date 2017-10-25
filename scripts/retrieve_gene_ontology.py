@@ -22,10 +22,10 @@ def main():
 		logger.debug('Content: %s', r.text)
 		output = {'dbxref': entry['dbxref']}
 		d = json.loads(r.text)
-		output['results'] = d['results']
-#		for result in d['results']:
-#			output.update(result)
-#		output.update(d['results'][0])
+		output['name'] = d['results'][0]['name']
+		output['synonyms'] = d['results'][0]['synonyms']
+		output['children'] = d['results'][0]['children']
+		output['definition'] = d['results'][0]['definition']['text']
 		documents.append(output)
 	print (json.dumps(documents))
 

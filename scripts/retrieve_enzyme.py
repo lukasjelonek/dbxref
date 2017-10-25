@@ -93,8 +93,28 @@ def main():
 				output['comments'].append(comment)
 			else:
 				output['comments'] = [comment]
-		documents.append(output)
+		documents.append(format_output(output))
 	print(json.dumps(documents))
 
+def format_output(d):
+	out = {'dbxref': d['dbxref']}
+	definition = {}
+	if 'name' in d:
+		out['name'] = d['name']
+	if 'alternative_names' in d:
+		out['synonyms'] = d.pop('alternative_names')
+	if 'UniProtKB/Swiss-Prot' in d:
+		out['UniProtKB/Swiss-Prot'] = d['UniProtKB/Swiss-Prot']
+	if 'reaction_catalysed' in d:
+		definition['reaction_catalysed'] = d['reaction_catalysed']
+	if 'cofactors' in d:
+		definition['cofactros'] = d['cofactors']
+	if 'comments' in d:
+		definition['comments'] = d['comments']
+	if len(definition) == 1:
+		out['deifinition'] = definition[0]
+	elif len(definition) > 1:
+		out['deifinition'] = definition
+	return (out)
 
 main()

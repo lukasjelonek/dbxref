@@ -33,6 +33,7 @@
   prefixes: ["SO"]
   resources:
       html: ["http://www.sequenceontology.org/browser/current_svn/term/SO:%i"]
+      obo: ["http://www.sequenceontology.org/browser/current_svn/export/term_only/obo/SO:%i"]
       csv: ["http://www.sequenceontology.org/browser/current_svn/export/term_only/csv_text/SO:%i"]
   # does not work
   # check_existence: "http://www.sequenceontology.org/browser/current_svn/term/SO:%i"
