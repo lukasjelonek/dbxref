@@ -3,9 +3,12 @@ import env
 import dbxref.config
 import dbxref.resolver
 import requests
+import logging
 import json
 import argparse
 import re
+
+logger = logging.getLogger(__name__)
 
 def main():
 	parser = argparse.ArgumentParser(description='Retrieve enzyme text documents for dbxrefs and convert them into json')
@@ -15,7 +18,9 @@ def main():
 	documents = []
 	for entry in resolved:
 		txt_url = entry['locations']['text'][0]
+		logger.debug('URL: %s', txt_url)
 		r = requests.get(txt_url)
+		logger.debug('Content: %s', r.text)
 		lines = r.text.split('\n')
 		output = {'dbxref': entry['dbxref']}
 		refs = []
