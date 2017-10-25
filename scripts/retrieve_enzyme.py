@@ -108,7 +108,7 @@ def format_output(d):
 	if 'reaction_catalysed' in d:
 		definition['reaction_catalysed'] = d['reaction_catalysed']
 	if 'cofactors' in d:
-		definition['cofactros'] = d['cofactors']
+		definition['cofactors'] = d['cofactors']
 	if 'comments' in d:
 		definition['comments'] = d['comments']
 	if len(definition) == 1:

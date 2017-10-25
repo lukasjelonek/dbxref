@@ -1,0 +1,21 @@
+enzyme:
+"UniProtKB/Swiss-Prot":	[["", ""], ...]
+"dbxref":		""
+"definition":		{"cofactors": ["", ...], "comments": ["", ...], "reaction_catalysed": ["", ...]}
+"name":			""
+"synonyms":		["", ...]
+
+gene ontology:
+"children":		[{"id": "", "relation": ""}, ...]
+"dbxref":		""
+"definition":		""
+"name":			""
+"synonyms":		[{"name": "", "type": ""}, ...]
+
+sequence ontology:
+"dbxref":		""
+"definition":		""
+"name":			""
+"namespace":		""
+"parent":		""
+"synonyms":		[{"name": "", "type": ""}, ...]
