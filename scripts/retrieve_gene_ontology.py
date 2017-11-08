@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import env
 import dbxref.config
 import dbxref.resolver
@@ -11,6 +12,8 @@ logger = logging.getLogger(__name__)
 
 def main():
 	parser = argparse.ArgumentParser(description='Retrieve gene ontology documents for dbxrefs and convert them into json')
+	parser.add_argument('--basic', '-b', action='store_true', help='Include dbxref, definition, name and synonyms')
+	parser.add_argument('--relations', '-r', action='store_true', help='Include dbxrefs and type of parent and children')
 	parser.add_argument('dbxrefs', nargs=argparse.REMAINDER)
 	args = parser.parse_args()
 	resolved = dbxref.resolver.resolve(args.dbxrefs, check_existence=False)
@@ -20,13 +23,49 @@ def main():
 		logger.debug('URL: %s', json_url)
 		r = requests.get(json_url)
 		logger.debug('Content: %s', r.text)
-		output = {'dbxref': entry['dbxref']}
 		d = json.loads(r.text)
-		output['name'] = d['results'][0]['name']
-		output['synonyms'] = d['results'][0]['synonyms']
-		output['children'] = d['results'][0]['children']
-		output['definition'] = d['results'][0]['definition']['text']
+		output = {'dbxref': entry['dbxref']}
+		if args.basic:
+			output['definition'] = d['results'][0]['definition']['text']
+			output['name'] = d['results'][0]['name']
+			output['synonyms'] = d['results'][0]['synonyms']
+		if args.relations:
+			output['relations']= {'children': d['results'][0]['children']}
+			for child in output['relations']['children']:
+				child['type'] = child.pop('relation')
+			output['relations']['parent'] = parse_history(d['results'][0]['history'])
 		documents.append(output)
 	print (json.dumps(documents))
+
+def parse_history(h):
+	out = []
+	for history in reversed(h):
+		if history['category'] == "RELATION":
+			if history['action'] == "Updated" or history['action'] == "Added":
+				out.append(history)
+			if history['action'] == "Deleted":
+				for i in reversed(range(len(out))):
+					if out[i]['text'] == history['text']:
+						del out[i]
+						break
+	for i in range(len(out)):
+		out[i] = parse_text(out[i]['text'])
+	return (out)
+
+def parse_text(t):
+	words = t.split(' ')
+	type = ''
+	out = {}
+	for word in words:
+		if 'GO:' in word:
+			out['id'] = word
+			break
+		else:
+			if type == '':
+				type = word
+			else:
+				type += "_" + word
+	out['type'] = type
+	return (out)
 
 main()

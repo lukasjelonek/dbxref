@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import env
 import dbxref.config
 import dbxref.resolver
@@ -12,6 +13,8 @@ logger = logging.getLogger(__name__)
 
 def main():
 	parser = argparse.ArgumentParser(description='Retrieve enzyme text documents for dbxrefs and convert them into json')
+	parser.add_argument('--basic', '-b', action='store_true', help='Include dbxref, definition, name and synonyms')
+	parser.add_argument('--references', '-r', action='store_true', help='Include uniprot dbxrefs')
 	parser.add_argument('dbxrefs', nargs=argparse.REMAINDER)
 	args = parser.parse_args()
 	resolved = dbxref.resolver.resolve(args.dbxrefs, check_existence=False)
@@ -80,9 +83,9 @@ def main():
 							l = e.split(', ')
 							l[1] = l[1].replace(' ', '')
 							l[1] = l[1].replace(';', '')
-							refs.append(l)
+							refs.append(l[0])
 			if len(refs) > 0:
-				output['UniProtKB/Swiss-Prot'] = refs
+				output['uniprot'] = refs
 		if len(reaction) > 0:
 			if 'reaction_catalysed' in output:
 				output['reaction_catalysed'].append(reaction)
@@ -93,28 +96,29 @@ def main():
 				output['comments'].append(comment)
 			else:
 				output['comments'] = [comment]
-		documents.append(format_output(output))
+		documents.append(format_output(output, args))
 	print(json.dumps(documents))
 
-def format_output(d):
+def format_output(d, args):
 	out = {'dbxref': d['dbxref']}
 	definition = {}
-	if 'name' in d:
-		out['name'] = d['name']
-	if 'alternative_names' in d:
-		out['synonyms'] = d.pop('alternative_names')
-	if 'UniProtKB/Swiss-Prot' in d:
-		out['UniProtKB/Swiss-Prot'] = d['UniProtKB/Swiss-Prot']
-	if 'reaction_catalysed' in d:
-		definition['reaction_catalysed'] = d['reaction_catalysed']
-	if 'cofactors' in d:
-		definition['cofactors'] = d['cofactors']
-	if 'comments' in d:
-		definition['comments'] = d['comments']
-	if len(definition) == 1:
-		out['deifinition'] = definition[0]
-	elif len(definition) > 1:
-		out['deifinition'] = definition
+	if args.basic:
+		if 'name' in d:
+			out['name'] = d['name']
+		if 'alternative_names' in d:
+			out['synonyms'] = d.pop('alternative_names')
+		if 'reaction_catalysed' in d:
+			definition['reaction_catalysed'] = d['reaction_catalysed']
+		if 'cofactors' in d:
+			definition['cofactors'] = d['cofactors']
+		if 'comments' in d:
+			definition['comments'] = d['comments']
+		if len(definition) == 1:
+			out['deifinition'] = definition[0]
+		elif len(definition) > 1:
+			out['deifinition'] = definition
+	if 'uniprot' in d and args.references:
+		out['uniprot'] = d['uniprot']
 	return (out)
 
 main()

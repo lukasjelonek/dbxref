@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 import env
 import dbxref.config
 import dbxref.resolver
@@ -6,11 +7,14 @@ import requests
 import logging
 import json
 import argparse
+from lxml import etree
 
 logger = logging.getLogger(__name__)
 
 def main():
 	parser = argparse.ArgumentParser(description='Retrieve sequence ontology csv documents for dbxrefs and convert them into json')
+	parser.add_argument('--basic', '-b', action='store_true', help='Include dbxref, definition, name and synonyms')
+	parser.add_argument('--relations', '-r', action='store_true', help='Include dbxrefs to parents and children')
 	parser.add_argument('dbxrefs', nargs=argparse.REMAINDER)
 	args = parser.parse_args()
 	resolved = dbxref.resolver.resolve(args.dbxrefs, check_existence=False)
@@ -35,10 +39,28 @@ def main():
 			else:
 				elements.append(line.strip())
 		d = resolve_elements(elements)
-		if 'id' in d and d['id'] == entry['dbxref']:
-			output = format_output(d)
+		output = {'dbxref': entry['dbxref']}
+		if 'id' in d and d['id'] == entry['dbxref'] and args.basic:
+			output.update(format_output(d))
+		if args.relations:
+			output['relations'] = resolve_relations(entry)
 		documents.append(output)
 	print (json.dumps(documents))
+
+def resolve_relations(entry):
+	tsv_url = entry['locations']['tsv'][0]
+	r = requests.get(tsv_url)
+	lines = r.text.strip().split('\n')
+	lines[0] = lines[0].split('\t')
+	lines[1] = lines[1].split('\t')
+	dic = {'parent': []}
+	if lines[1][3] != '':
+		dic['parent'] = lines[1][3].split(',')
+	if len(lines[1]) == 5:
+	    dic['children'] = lines[1][4].split(',')
+	else:
+	    dic['children'] = []
+	return (dic)
 
 def resolve_elements(es):
 	dict = {}
@@ -55,8 +77,6 @@ def resolve_elements(es):
 
 def format_output(d):
 	out = {}
-	if 'id' in d:
-		out['dbxref'] = d['id']
 	if 'def' in d:
 		de = d['def'].split('" ')
 		de = de[0].replace('"', '')
@@ -72,10 +92,6 @@ def format_output(d):
 		out['namespace'] = d['namespace']
 	else:
 		out['namespace'] = ""
-	if 'is_a' in d:
-		out['parent'] = d['is_a']
-	else:
-		out['parent'] = ""
 	if 'synonym' in d:
 		out['synonyms'] = []
 		for synonym in d['synonym']:
