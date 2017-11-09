@@ -44,6 +44,9 @@ def main():
 			output.update(format_output(d))
 		if args.relations:
 			output['relations'] = resolve_relations(entry)
+		if 'id' in d and d['id'] == entry['dbxref'] and not args.basic and not args.relations:
+			output.update(format_output(d))
+			output['relations'] = resolve_relations(entry)
 		documents.append(output)
 	print (json.dumps(documents))
 
@@ -53,9 +56,9 @@ def resolve_relations(entry):
 	lines = r.text.strip().split('\n')
 	lines[0] = lines[0].split('\t')
 	lines[1] = lines[1].split('\t')
-	dic = {'parent': []}
+	dic = {'parents': []}
 	if lines[1][3] != '':
-		dic['parent'] = lines[1][3].split(',')
+		dic['parents'] = lines[1][3].split(',')
 	if len(lines[1]) == 5:
 	    dic['children'] = lines[1][4].split(',')
 	else:

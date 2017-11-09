@@ -84,8 +84,7 @@ def main():
 							l[1] = l[1].replace(' ', '')
 							l[1] = l[1].replace(';', '')
 							refs.append(l[0])
-			if len(refs) > 0:
-				output['uniprot'] = refs
+			output['uniprot'] = refs
 		if len(reaction) > 0:
 			if 'reaction_catalysed' in output:
 				output['reaction_catalysed'].append(reaction)
@@ -99,25 +98,33 @@ def main():
 		documents.append(format_output(output, args))
 	print(json.dumps(documents))
 
+def read_basic(d):
+	out = {}
+	definition = {}
+	if 'name' in d:
+		out['name'] = d['name']
+	if 'alternative_names' in d:
+		out['synonyms'] = d.pop('alternative_names')
+	if 'reaction_catalysed' in d:
+		definition['reaction_catalysed'] = d['reaction_catalysed']
+	if 'cofactors' in d:
+		definition['cofactors'] = d['cofactors']
+	if 'comments' in d:
+		definition['comments'] = d['comments']
+	if len(definition) == 1:
+		out['deifinition'] = definition[0]
+	elif len(definition) > 1:
+		out['deifinition'] = definition
+	return (out)
+
 def format_output(d, args):
 	out = {'dbxref': d['dbxref']}
-	definition = {}
 	if args.basic:
-		if 'name' in d:
-			out['name'] = d['name']
-		if 'alternative_names' in d:
-			out['synonyms'] = d.pop('alternative_names')
-		if 'reaction_catalysed' in d:
-			definition['reaction_catalysed'] = d['reaction_catalysed']
-		if 'cofactors' in d:
-			definition['cofactors'] = d['cofactors']
-		if 'comments' in d:
-			definition['comments'] = d['comments']
-		if len(definition) == 1:
-			out['deifinition'] = definition[0]
-		elif len(definition) > 1:
-			out['deifinition'] = definition
-	if 'uniprot' in d and args.references:
+		out.update(read_basic(d))
+	if args.references:
+		out['uniprot'] = d['uniprot']
+	if not args.basic and not args.references:
+		out.update(read_basic(d))
 		out['uniprot'] = d['uniprot']
 	return (out)
 

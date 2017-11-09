@@ -59,6 +59,9 @@
       xml: ["http://pfam.xfam.org/family/%i?output=xml"]
   # does not work
   # check_existence: "http://pfam.xfam.org/family/%i?content-type=text%2Fxml"
+  retriever:
+      type: 'external'
+      location: 'scripts/retrieve_pfam.py'
 - name: PDB
   prefixes: ["PDB"]
   resources:

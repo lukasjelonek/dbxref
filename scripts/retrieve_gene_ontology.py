@@ -26,16 +26,27 @@ def main():
 		d = json.loads(r.text)
 		output = {'dbxref': entry['dbxref']}
 		if args.basic:
-			output['definition'] = d['results'][0]['definition']['text']
-			output['name'] = d['results'][0]['name']
-			output['synonyms'] = d['results'][0]['synonyms']
+			output.update(read_basic(d))
 		if args.relations:
-			output['relations']= {'children': d['results'][0]['children']}
-			for child in output['relations']['children']:
-				child['type'] = child.pop('relation')
-			output['relations']['parent'] = parse_history(d['results'][0]['history'])
+			output.update(read_relations(d))
+		if not args.basic and not args.relations:
+			output.update(read_basic(d))
+			output.update(read_relations(d))
 		documents.append(output)
 	print (json.dumps(documents))
+
+def read_basic(d):
+	out = {'definition': d['results'][0]['definition']['text']}
+	out['name'] = d['results'][0]['name']
+	out['synonyms'] = d['results'][0]['synonyms']
+	return (out)
+
+def read_relations(d):
+	out = {'relations': {'children': d['results'][0]['children']}}
+	for child in out['relations']['children']:
+		child['type'] = child.pop('relation')
+	out['relations']['parents'] = parse_history(d['results'][0]['history'])
+	return (out)
 
 def parse_history(h):
 	out = []
