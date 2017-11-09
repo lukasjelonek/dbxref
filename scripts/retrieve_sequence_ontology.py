@@ -39,7 +39,7 @@ def main():
 			else:
 				elements.append(line.strip())
 		d = resolve_elements(elements)
-		output = {'dbxref': entry['dbxref']}
+		output = {'id': entry['dbxref']}
 		if 'id' in d and d['id'] == entry['dbxref'] and args.basic:
 			output.update(format_output(d))
 		if args.relations:

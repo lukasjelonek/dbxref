@@ -24,7 +24,7 @@ def main():
 		r = requests.get(json_url)
 		logger.debug('Content: %s', r.text)
 		d = json.loads(r.text)
-		output = {'dbxref': entry['dbxref']}
+		output = {'id': entry['dbxref']}
 		if args.basic:
 			output.update(read_basic(d))
 		if args.relations:

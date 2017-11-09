@@ -39,7 +39,7 @@ def main():
         logger.debug('Content: %s', r.text)
         root = ET.fromstring(r.text)
 
-        output = {'dbxref': entry['dbxref']}
+        output = {'id': entry['dbxref']}
 
         for child in root.findall('uniprot:entry', ns):
             if args.basic:

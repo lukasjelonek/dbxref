@@ -118,7 +118,7 @@ def read_basic(d):
 	return (out)
 
 def format_output(d, args):
-	out = {'dbxref': d['dbxref']}
+	out = {'id': d['dbxref']}
 	if args.basic:
 		out.update(read_basic(d))
 	if args.references:

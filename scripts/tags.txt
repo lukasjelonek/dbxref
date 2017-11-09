@@ -1,69 +1,79 @@
 enzyme:
-	"dbxref":				""
 	"definition":			{"cofactors": ["", ...], "comments": ["", ...], "reaction_catalysed": ["", ...]}
+	"id":					""
 	"name":					""
 	"synonyms":				["", ...]
 	"uniprot":				["", ...]
 
 --basic:
-	"dbxref":				""
 	"definition":			{"cofactors": ["", ...], "comments": ["", ...], "reaction_catalysed": ["", ...]}
+	"id":					""
 	"name":					""
 	"synonyms":				["", ...]
 
 --references:
-	"dbxref":				""
+	"id":					""
 	"uniprot":				["", ...]
 
 
 	
 gene ontology:
-	"dbxref":				""
 	"definition":			""
+	"id":					""
 	"name":					""
 	"relations":			{"children": [{"id": "", "type": ""}, ...], "parents": [{"id": "", "type": ""}, ...]}
 	"synonyms":				[{"name": "", "type": ""}, ...]
 
 --basic:
-	"dbxref":				""
 	"definition":			""
+	"id":					""
 	"name":					""
 	"synonyms":				[{"name": "", "type": ""}, ...]
 
 --relations:
-	"dbxref":				""
+	"id":					""
 	"relations":			{"children": [{"id": "", "type": ""}, ...], "parents": [{"id": "", "type": ""}, ...]}
 
 
 
 pfam:
+	"accession":			""
+	"comment":				""
 	"dbxref":				""
+	"description":			""
+	"id":					""
+	"terms":				[{"description": "", "id": ""}, ...]
 
 --basic:
 	"dbxref":				""
+	"description":			""
 
 --annotation:
+	"accession":			""
+	"comment":				""
 	"dbxref":				""
+	"id":					""
+	"terms":				[{"description": "", "id": ""}, ...]
 
 
 
 sequence ontology:
-	"dbxref":				""
 	"definition":			""
+	"id":					""
 	"name":					""
 	"namespace":			""
 	"relations:				{"children": ["", ...], "parents": ["", ...]}
 	"synonyms":				[{"name": "", "type": ""}, ...]
 
 --basic:
-	"dbxref":				""
 	"definition":			""
+	"id":					""
 	"name":					""
 	"namespace":			""
 	"synonyms":				[{"name": "", "type": ""}, ...]
 
 --relations:
-	"dbxref":				""
+	"id":					""
 	"relations:				{"children": ["", ...], "parents": ["", ...]}
 
 
@@ -71,33 +81,33 @@ sequence ontology:
 uniprot:	
 	"acessions":			["", ...]
 	"alternative_names":	["", ...]	
-	"dbxref":				""
 	"dbxrefs":				["", ...]
 	"description":			""
+	"id":					""
 	"keywords":				["", ...]
 	"organism":				""
 	"recommended_name":		{"full": ""}
 	"sequence":				""
 
 --basic:
-	"dbxref":				""
 	"description":			""
+	"id":					""
 
 --sequence:
-	"dbxref":				""
+	"id":					""
 	"sequence":				""
 
 --organism:
-	"dbxref":				""
+	"id":					""
 	"organism":				""
 
 --annotation:
 	"acessions":			["", ...]
 	"alternative_names":	["", ...]	
-	"dbxref":				""
 	"dbxrefs":				["", ...]
+	"id":					""
 	"keywords":				["", ...]
 	"recommended_name":		{"full": ""}
 
 --features:
-	"dbxref":				""
+	"id":					""

@@ -20,7 +20,6 @@ def main():
     parser.add_argument('--annotation', '-a', action='store_true', help='Include annotation')
     parser.add_argument('dbxrefs', nargs=argparse.REMAINDER)
     args = parser.parse_args()
-
     if not (args.basic or args.annotation):
         args.basic = True
         args.annotation = True
