@@ -12,8 +12,8 @@ logger = logging.getLogger(__name__)
 
 def main():
 	parser = argparse.ArgumentParser(description='Retrieve gene ontology documents for dbxrefs and convert them into json')
-	parser.add_argument('--basic', '-b', action='store_true', help='Include dbxref, definition, name and synonyms')
-	parser.add_argument('--relations', '-r', action='store_true', help='Include dbxrefs and type of parent and children')
+	parser.add_argument('--basic', '-b', action='store_true', help='Include id, definition, name and synonyms')
+	parser.add_argument('--relations', '-r', action='store_true', help='Include id, parents and children')
 	parser.add_argument('dbxrefs', nargs=argparse.REMAINDER)
 	args = parser.parse_args()
 	resolved = dbxref.resolver.resolve(args.dbxrefs, check_existence=False)

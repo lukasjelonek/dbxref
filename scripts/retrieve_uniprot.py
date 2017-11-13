@@ -16,7 +16,7 @@ ns = {'uniprot': 'http://uniprot.org/uniprot'}
 
 def main():
     parser = argparse.ArgumentParser(description='Retrieve uniprot xml documents for dbxrefs and convert them into json')
-    parser.add_argument('--basic', '-b', action='store_true', help='Include dbxref and description')
+    parser.add_argument('--basic', '-b', action='store_true', help='Include id and description')
     parser.add_argument('--sequence', '-s', action='store_true', help='Include sequence')
     parser.add_argument('--organism', '-o', action='store_true', help='Include organism info')
     parser.add_argument('--annotation', '-a', action='store_true', help='Include annotation')

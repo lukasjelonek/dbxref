@@ -13,8 +13,8 @@ logger = logging.getLogger(__name__)
 
 def main():
 	parser = argparse.ArgumentParser(description='Retrieve enzyme text documents for dbxrefs and convert them into json')
-	parser.add_argument('--basic', '-b', action='store_true', help='Include dbxref, definition, name and synonyms')
-	parser.add_argument('--references', '-r', action='store_true', help='Include uniprot dbxrefs')
+	parser.add_argument('--basic', '-b', action='store_true', help='Include id, definition, name and synonyms')
+	parser.add_argument('--references', '-r', action='store_true', help='Include id, uniprot dbxrefs')
 	parser.add_argument('dbxrefs', nargs=argparse.REMAINDER)
 	args = parser.parse_args()
 	resolved = dbxref.resolver.resolve(args.dbxrefs, check_existence=False)
