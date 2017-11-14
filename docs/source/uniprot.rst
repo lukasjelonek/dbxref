@@ -12,7 +12,7 @@ Options
   * ``--sequence`` - include id and sequence
   * ``--organism`` - include id and organism info
   * ``--annotation`` - include id and annotation
-  * ``--features`` - include id and features (NOT IMPLEMENTED YET)
+  * ``--features`` - include id and features
 
 Input
 -----
@@ -38,6 +38,14 @@ output scheme::
               "list of dbxrefs"
           ],
           "description": "protein description",
+          "features": [
+              {
+                  "begin": "start position of feature",
+                  "description": "description of feature",
+                  "end": "end position of feature",
+                  "type": "type of feature"
+              }
+          ],
           "id": "dbxref of protein",
           "keywords": [
               "list of keywords"
@@ -111,6 +119,14 @@ output scheme::
 
   [
       {
+          "features": [
+              {
+                  "begin": "start position of feature",
+                  "description": "description of feature",
+                  "end": "end position of feature",
+                  "type": "type of feature"
+              }
+          ],
           "id": "dbxref of protein"
       }
   ]
@@ -140,6 +156,20 @@ example output::
               "Pfam:PF04948"
           ],
           "description": "Protein A51",
+          "features": [
+              {
+                  "begin": "1",
+                  "description": "Protein A51",
+                  "end": "334",
+                  "type": "chain"
+              },
+              {
+                  "begin": "89",
+                  "description": "Poly-Asp",
+                  "end": "92",
+                  "type": "compositionally biased region"
+              }
+          ],
           "id": "UniProtKB/Swiss-Prot:Q01219",
           "keywords": [
               "Complete proteome",

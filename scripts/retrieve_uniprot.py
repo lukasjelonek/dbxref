@@ -20,7 +20,7 @@ def main():
     parser.add_argument('--sequence', '-s', action='store_true', help='Include sequence')
     parser.add_argument('--organism', '-o', action='store_true', help='Include organism info')
     parser.add_argument('--annotation', '-a', action='store_true', help='Include annotation')
-    parser.add_argument('--features', '-f', action='store_true', help='Include features (NOT IMPLEMENTED YET)')
+    parser.add_argument('--features', '-f', action='store_true', help='Include features')
     parser.add_argument('dbxrefs', nargs=argparse.REMAINDER)
     args = parser.parse_args()
 
@@ -51,11 +51,10 @@ def main():
             if args.annotation:
                 output.update(read_annotation(child))
             if args.features:
-                output.update(read_features(child))
+                output['features'] = read_features(child)
         documents.append(output)
     print(json.dumps(documents))
 
-    
 def read_basic(entry):
     protein = entry.find('uniprot:protein', ns)
     recname = protein.find('uniprot:recommendedName', ns)
@@ -81,7 +80,7 @@ def read_taxonomy(entry):
 def read_annotation(entry):
     annotation = {
             'accessions': read_accessions(entry),
-            'dbxrefs' : read_dbrefs(entry), 
+            'dbxrefs' : read_dbrefs(entry),
             'keywords': read_keywords(entry)
             }
     annotation.update(read_names(entry))
@@ -102,7 +101,7 @@ def read_names(entry):
     protein = entry.find('uniprot:protein', ns)
     recname = protein.find('uniprot:recommendedName', ns)
     recommended_name = {
-            'full' : recname.find('uniprot:fullName', ns).text, 
+            'full' : recname.find('uniprot:fullName', ns).text,
             }
     short = recname.find('uniprot:shortName', ns)
     if short is not None:
@@ -115,7 +114,7 @@ def read_names(entry):
         if short is not None:
             alternative_name['short'] = short.text
         alternative_names.append(alternative_name)
-    return { 
+    return {
             'recommended_name': recommended_name,
             'alternative_names': alternative_names
            }
@@ -133,6 +132,17 @@ def read_keywords(entry):
     return keywords
 
 def read_features(entry):
-    return {}
+    features = []
+    for f in entry.findall('uniprot:feature', ns):
+        feature = {}
+        feature['description'] = f.attrib['description']
+        feature['type'] = f.attrib['type']
+        if f.find('uniprot:location', ns).find('uniprot:position', ns) is not None:
+            feature['position'] = f.find('uniprot:location', ns).find('uniprot:position', ns).attrib['position']
+        else:
+            feature['begin'] = f.find('uniprot:location', ns).find('uniprot:begin', ns).attrib['position']
+            feature['end'] = f.find('uniprot:location', ns).find('uniprot:end', ns).attrib['position']
+        features.append (feature)
+    return features
 
 main()
