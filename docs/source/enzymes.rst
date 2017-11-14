@@ -24,50 +24,72 @@ output scheme::
 
   default output:
 
-  "definition": {"cofactors": ["", ...], "comments": ["", ...], "reaction_catalyzed": ["", ...]}
-  "id":		""
-  "name":	""
-  "synonyms":	["", ...]
-  "uniprot":	["", ...]
+  [
+      {
+          "dbxrefs": [
+              "list of dbxrefs"
+          ]
+          "deifinition": {
+              "cofactors": [
+                  "list of cofactors"
+              ],
+              "comments": [
+                  "list of comments"
+              ],
+              "reaction_catalyzed": [
+                  "list of catalyzed reactions"
+              ]
+          },
+          "id": "dbxref of enzyme",
+          "name": "enzyme name",
+          "synonyms": [
+              "list of synonyms"
+          ]
+      }
+  ]
 
 
   --basic output:
 
-  "definition": {"cofactors": ["", ...], "comments": ["", ...], "reaction_catalyzed": ["", ...]}
-  "id":		""
-  "name":	""
-  "synonyms":	["", ...]
+  [
+      {
+          "deifinition": {
+              "cofactors": [
+                  "list of cofactors"
+              ],
+              "comments": [
+                  "list of comments"
+              ],
+              "reaction_catalyzed": [
+                  "list of catalyzed reactions"
+              ]
+          },
+          "id": "dbxref of enzyme",
+          "name": "enzyme name",
+          "synonyms": [
+              "list of synonyms"
+          ]
+      }
+  ]
 
 
   --references output:
 
-  "id":		""
-  "uniprot":	["", ...]
+  [
+      {
+          "dbxrefs": [
+              "list of dbxrefs"
+          ]
+          "id": "dbxref of enzyme"
+      }
+  ]
 
 
 example output::
 
   [
       {
-          "deifinition": {
-              "cofactors": [
-                  "Zn(2+) or Fe cation."
-              ],
-              "comments": [
-                  "Acts on primary or secondary alcohols or hemi-acetals with very broad specificity; however the enzyme oxidizes methanol much more poorly than ethanol.",
-                  "The animal, but not the yeast, enzyme acts also on cyclic secondary alcohols."
-              ],
-              "reaction_catalysed": [
-                  "An alcohol + NAD(+) = an aldehyde or ketone + NADH.",
-                  "A secondary alcohol + NAD(+) = a ketone + NADH."
-              ]
-          },
-          "id": "EC:1.1.1.1",
-          "name": "Alcohol dehydrogenase.",
-          "synonyms": [
-              "Aldehyde reductase."
-          ],
-          "uniprot": [
+          "dbxrefs": [
               "P07327",
               "P28469",
               "Q5RBP7",
@@ -314,6 +336,24 @@ example output::
               "N4WW42",
               "P33010",
               "O07737"
+          ]
+          "deifinition": {
+              "cofactors": [
+                  "Zn(2+) or Fe cation."
+              ],
+              "comments": [
+                  "Acts on primary or secondary alcohols or hemi-acetals with very broad specificity; however the enzyme oxidizes methanol much more poorly than ethanol.",
+                  "The animal, but not the yeast, enzyme acts also on cyclic secondary alcohols."
+              ],
+              "reaction_catalyzed": [
+                  "An alcohol + NAD(+) = an aldehyde or ketone + NADH.",
+                  "A secondary alcohol + NAD(+) = a ketone + NADH."
+              ]
+          },
+          "id": "EC:1.1.1.1",
+          "name": "Alcohol dehydrogenase.",
+          "synonyms": [
+              "Aldehyde reductase."
           ]
       }
   ]

@@ -26,48 +26,94 @@ output scheme::
 
   default output:
 
-  "acessions":		["", ...]
-  "alternative_names":	["", ...]
-  "dbxrefs":		["", ...]
-  "description":	""
-  "id":			""
-  "keywords":		["", ...]
-  "organism":		""
-  "recommended_names":	{"full": ""}
-  "sequence":		""
+  [
+      {
+          "accessions": [
+              "list of accessions"
+          ],
+          "alternative_names": [
+              "list of alternative names"
+          ],
+          "dbxrefs": [
+              "list of dbxrefs"
+          ],
+          "description": "protein description",
+          "id": "dbxref of protein",
+          "keywords": [
+              "list of keywords"
+          ],
+          "organism": "taxon dbxref",
+          "recommended_name": {
+              "full": "recommended name for protein"
+          },
+          "sequence": "amino acid sequence of protein"
+      }
+  ]
 
 
   --basic output:
 
+  [
+      {
+          "description": "protein description",
+          "id": "dbxref of protein"
+      }
+  ]
   "description":	""
   "id":			""
 
 
   --sequence output:
 
-  "id":			""
-  "sequence":		""
+  [
+      {
+          "id": "dbxref of protein",
+          "sequence": "amino acid sequence of protein"
+      }
+  ]
 
 
   --organism output:
 
-  "id":			""
-  "organism":		""
+  [
+      {
+          "id": "dbxref of protein",
+          "organism": "taxon dbxref"
+      }
+  ]
 
 
   --annotation output:
 
-  "acessions":		["", ...]
-  "alternative_names":	["", ...]
-  "dbxrefs":		["", ...]
-  "id":			""
-  "keywords":		["", ...]
-  "recommended_names":	{"full": ""}
+  [
+      {
+          "accessions": [
+              "list of accessions"
+          ],
+          "alternative_names": [
+              "list of alternative names"
+          ],
+          "dbxrefs": [
+              "list of dbxrefs"
+          ],
+          "id": "dbxref of protein",
+          "keywords": [
+              "list of keywords"
+          ],
+          "recommended_name": {
+              "full": "recommended name for protein"
+          }
+      }
+  ]
 
 
   --features output:
 
-  "id":			""
+  [
+      {
+          "id": "dbxref of protein"
+      }
+  ]
 
 example output::
 

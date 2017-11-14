@@ -24,25 +24,74 @@ output scheme::
 
   default output:
 
-  "definition": ""
-  "id":		""
-  "name":	""
-  "relations":	{"children": [{"id": "", "type": ""}, ...], "parents": [{"id": "", "type": ""}, ...]}
-  "synonyms":	[{"name": "", "type": ""}, ...]
+  [
+      {
+          "definition": "definition of the GO term",
+          "id": "dbxref of the GO term",
+          "name": "GO term name",
+          "relations": {
+              "children": [
+                  {
+                      "id": "child dbxref",
+                      "type": "type of child"
+                  }
+              ],
+              "parents": [
+                  {
+                      "id": "parent dbxref",
+                      "type": "type of parent"
+                  }
+              ]
+          },
+          "synonyms": [
+              {
+                  "name": "synonym name",
+                  "type": "type of synonym"
+              }
+          ]
+      }
+  ]
 
 
   --basic output:
 
-  "definition": ""
-  "id":		""
-  "name":	""
-  "synonyms":	[{"name": "", "type": ""}, ...]
+  [
+      {
+          "definition": "definition of the GO term",
+          "id": "dbxref of the GO term",
+          "name": "GO term name",
+          "synonyms": [
+              {
+                  "name": "synonym name",
+                  "type": "type of synonym"
+              }
+          ]
+      }
+  ]
 
 
-  --references output:
+  --relations output:
 
-  "id":		""
-  "relations":	{"children": [{"id": "", "type": ""}, ...], "parents": [{"id": "", "type": ""}, ...]}
+  [
+      {
+          "id": "dbxref of the GO term",
+          "relations": {
+              "children": [
+                  {
+                      "id": "child dbxref",
+                      "type": "type of child"
+                  }
+              ],
+              "parents": [
+                  {
+                      "id": "parent dbxref",
+                      "type": "type of parent"
+                  }
+              ]
+          }
+      }
+  ]
+
 
 example output::
 

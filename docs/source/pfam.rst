@@ -8,8 +8,8 @@ Retrieve pfam xml documents for dbxrefs and convert them into json.
 Options
 -------
 
-  * ``--basic`` - include dbxref and description
-  * ``--annotation`` - include dbxref and annotation
+  * ``--basic`` - include id and description
+  * ``--annotation`` - include id and annotation
 
 Input
 -----
@@ -24,27 +24,49 @@ output scheme::
 
   default output:
 
-  "acession":		""
-  "comment":		""
-  "dbxref":		""
-  "description":	""
-  "id":			""
-  "terms":		[{"description": "", "id": ""}, ...]
+  [
+      {
+          "accession": "dbxref accession of the protein family",
+          "comment": "comment to protein family",
+          "description": "description of the protein family",
+          "domain": "protein domain",
+          "id": "dbxref of the protein family",
+          "terms": [
+              {
+                  "description": "term description",
+                  "id": "term dbxref"
+              }
+          ]
+      }
+  ]
 
 
   --basic output:
 
-  "dbxref":		""
-  "description":	""
+  [
+      {
+          "description": "description of the protein family",
+          "id": "dbxref of the protein family"
+      }
+  ]
 
 
   --annotation output:
 
-  "acession":		""
-  "comment":		""
-  "dbxref":		""
-  "id":			""
-  "terms":		[{"description": "", "id": ""}, ...]
+  [
+      {
+          "accession": "dbxref accession of the protein family",
+          "comment": "comment to protein family",
+          "domain": "protein domain",
+          "id": "dbxref of the protein family",
+          "terms": [
+              {
+                  "description": "term description",
+                  "id": "term dbxref"
+              }
+          ]
+      }
+  ]
 
 example output::
 
@@ -52,9 +74,9 @@ example output::
       {
           "accession": "PF00002",
           "comment": "This family is known as Family B, the secretin-receptor family or family 2 of the G-protein-coupled receptors (GCPRs).They have been described in many animal species, but not in plants, fungi or prokaryotes. Three distinct sub-families are recognised. Subfamily B1 contains classical hormone receptors, such as receptors for secretin and glucagon, that are all involved in cAMP-mediated signalling pathways. Subfamily B2 contains receptors with long extracellular N-termini, such as the leukocyte cell-surface antigen CD97 (Swiss:P48960); calcium-independent receptors for latrotoxin (such as Swiss:O94910), and brain-specific angiogenesis inhibitors (such as Swiss:O14514) amongst others. Subfamily B3 includes Methuselah and other Drosophila proteins (e.g. Swiss:P83119). Other than the typical seven-transmembrane region, characteristic structural features include an amino-terminal extracellular domain involved in ligand binding, and an intracellular loop (IC3) required for specific G-protein coupling [1].",
-          "dbxref": "PFAM:PF00002",
           "description": "7 transmembrane receptor (Secretin family)",
-          "id": "7tm_2",
+          "domain": "7tm_2",
+          "id": "PFAM:PF00002",
           "terms": [
               {
                   "description": "integral component of membrane",

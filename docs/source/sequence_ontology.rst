@@ -24,27 +24,63 @@ output scheme::
 
   default output:
 
-  "definition": ""
-  "id":		""
-  "name":	""
-  "namespace":	""
-  "relations":	{"children": ["", ...], "parents": ["", ...]}
-  "synonyms":	[{"name": "", "type": ""}, ...]
+  [
+      {
+          "definition": "definition of the SO term",
+          "id": "dbxref of the SO term",
+          "name": "SO term name",
+          "namespace": "namespace of the SO term",
+          "relations": {
+              "children": [
+                  "child dbxref"
+              ],
+              "parents": [
+                  "parent dbxref"
+              ]
+          },
+          "synonyms": [
+              {
+                  "name": "synonym name",
+                  "type": "type of synonym"
+              }
+          ]
+      }
+  ]
 
 
   --basic output:
 
-  "definition": ""
-  "id":		""
-  "name":	""
-  "namespace":	""
-  "synonyms":	[{"name": "", "type": ""}, ...]
+  [
+      {
+          "definition": "definition of the SO term",
+          "id": "dbxref of the SO term",
+          "name": "SO term name",
+          "namespace": "namespace of the SO term",
+          "synonyms": [
+              {
+                  "name": "synonym name",
+                  "type": "type of synonym"
+              }
+          ]
+      }
+  ]
 
 
-  --references output:
+  --relations output:
 
-  "id":		""
-  "relations":	{"children": ["", ...], "parents": ["", ...]}
+  [
+      {
+          "id": "dbxref of the SO term",
+          "relations": {
+              "children": [
+                  "child dbxref"
+              ],
+              "parents": [
+                  "parent dbxref"
+              ]
+          }
+      }
+  ]
 
 example output::
 
