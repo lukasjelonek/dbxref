@@ -43,10 +43,10 @@ def main():
 					if len(reaction) == 0:
 						reaction += line_elements[1][line_elements[1].find(' ')+1:]
 					else:
-						if 'reaction_catalysed' in output:
-							output['reaction_catalysed'].append(reaction)
+						if 'reaction_catalyzed' in output:
+							output['reaction_catalyzed'].append(reaction)
 						else:
-							output['reaction_catalysed'] = [reaction]
+							output['reaction_catalyzed'] = [reaction]
 						reaction = line_elements[1][line_elements[1].find(' ')+1:]
 				else:
 					if len(reaction) == 0:
@@ -84,12 +84,12 @@ def main():
 							l[1] = l[1].replace(' ', '')
 							l[1] = l[1].replace(';', '')
 							refs.append(l[0])
-			output['uniprot'] = refs
+			output['dbxrefs'] = refs
 		if len(reaction) > 0:
-			if 'reaction_catalysed' in output:
-				output['reaction_catalysed'].append(reaction)
+			if 'reaction_catalyzed' in output:
+				output['reaction_catalyzed'].append(reaction)
 			else:
-				output['reaction_catalysed'] = [reaction]
+				output['reaction_catalyzed'] = [reaction]
 		if len(comment) > 0:
 			if 'comments' in output:
 				output['comments'].append(comment)
@@ -105,8 +105,8 @@ def read_basic(d):
 		out['name'] = d['name']
 	if 'alternative_names' in d:
 		out['synonyms'] = d.pop('alternative_names')
-	if 'reaction_catalysed' in d:
-		definition['reaction_catalysed'] = d['reaction_catalysed']
+	if 'reaction_catalyzed' in d:
+		definition['reaction_catalyzed'] = d['reaction_catalyzed']
 	if 'cofactors' in d:
 		definition['cofactors'] = d['cofactors']
 	if 'comments' in d:
@@ -122,10 +122,10 @@ def format_output(d, args):
 	if args.basic:
 		out.update(read_basic(d))
 	if args.references:
-		out['uniprot'] = d['uniprot']
+		out['dbxrefs'] = d['dbxrefs']
 	if not args.basic and not args.references:
 		out.update(read_basic(d))
-		out['uniprot'] = d['uniprot']
+		out['dbxrefs'] = d['dbxrefs']
 	return (out)
 
 main()

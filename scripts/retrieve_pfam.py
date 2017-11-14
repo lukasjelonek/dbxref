@@ -32,7 +32,7 @@ def main():
         logger.debug('Content: %s', r.text)
         root = ET.fromstring(r.text)
 
-        output = {'dbxref': entry['dbxref']}
+        output = {'id': entry['dbxref']}
 
         for child in root.findall('pfam:entry', ns):
             if args.basic:
@@ -49,7 +49,7 @@ def read_basic(entry):
 
 def read_annotation(entry):
     annotation = {
-            'id': entry.attrib['id'],
+            'domain': entry.attrib['id'],
             'accession': entry.attrib['accession'],
             'terms' : [],
             'comment': entry.find('pfam:comment', ns).text.strip()
