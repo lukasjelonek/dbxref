@@ -83,7 +83,7 @@ def main():
 							l = e.split(', ')
 							l[1] = l[1].replace(' ', '')
 							l[1] = l[1].replace(';', '')
-							refs.append(l[0])
+							refs.append('UniProtKB/Swiss-Prot:' + l[0])
 			output['dbxrefs'] = refs
 		if len(reaction) > 0:
 			if 'reaction_catalyzed' in output:

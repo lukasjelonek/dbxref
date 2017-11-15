@@ -17,7 +17,7 @@ Options
 Input
 -----
 
-example: ``UniProtKB/Swiss-Prot:Q01219``
+example: ``UniProtKB/Swiss-Prot:Q5XI95``
 
 Output
 ------
@@ -29,7 +29,7 @@ output scheme::
   [
       {
           "accessions": [
-              "list of accessions"
+              "list of accession numbers"
           ],
           "alternative_names": [
               "list of alternative names"
@@ -39,6 +39,12 @@ output scheme::
           ],
           "description": "protein description",
           "features": [
+              {
+                  "description": "description of feature",
+                  "position": "position of feature",
+                  "type": "type of feature"
+              }
+              or
               {
                   "begin": "start position of feature",
                   "description": "description of feature",
@@ -96,7 +102,7 @@ output scheme::
   [
       {
           "accessions": [
-              "list of accessions"
+              "list of accession numbers"
           ],
           "alternative_names": [
               "list of alternative names"
@@ -121,6 +127,12 @@ output scheme::
       {
           "features": [
               {
+                  "description": "description of feature",
+                  "position": "position of feature",
+                  "type": "type of feature"
+              }
+              or
+              {
                   "begin": "start position of feature",
                   "description": "description of feature",
                   "end": "end position of feature",
@@ -136,49 +148,142 @@ example output::
   [
       {
           "accessions": [
-              "Q01219",
-              "Q76ZM7"
+              "Q5XI95"
           ],
           "alternative_names": [],
           "dbxrefs": [
-              "EMBL:D11079",
-              "EMBL:AY243312",
-              "PIR:JQ1789",
-              "RefSeq:YP_233059.1",
-              "DIP:DIP-2178N",
-              "IntAct:Q01219",
-              "MINT:MINT-130825",
-              "GeneID:3707706",
-              "KEGG:vg:3707706",
-              "OrthoDB:VOG090000DH",
-              "Proteomes:UP000000344",
-              "InterPro:IPR007032",
-              "Pfam:PF04948"
+              "EC:1.1.1.1",
+              "EMBL:BC083792",
+              "RefSeq:NP_001012084.1",
+              "UniGene:Rn.214994",
+              "ProteinModelPortal:Q5XI95",
+              "SMR:Q5XI95",
+              "STRING:10116.ENSRNOP00000030638",
+              "PhosphoSitePlus:Q5XI95",
+              "PaxDb:Q5XI95",
+              "PRIDE:Q5XI95",
+              "Ensembl:ENSRNOT00000036993",
+              "GeneID:310903",
+              "KEGG:rno:310903",
+              "CTD:130",
+              "RGD:1306313",
+              "eggNOG:KOG0022",
+              "eggNOG:COG1062",
+              "GeneTree:ENSGT00430000030800",
+              "HOGENOM:HOG000294674",
+              "HOVERGEN:HBG000195",
+              "InParanoid:Q5XI95",
+              "KO:K13952",
+              "PhylomeDB:Q5XI95",
+              "TreeFam:TF300429",
+              "Reactome:R-RNO-2161541",
+              "Reactome:R-RNO-5365859",
+              "Reactome:R-RNO-71384",
+              "PRO:PR:Q5XI95",
+              "Proteomes:UP000002494",
+              "Bgee:ENSRNOG00000012436",
+              "ExpressionAtlas:Q5XI95",
+              "GO:0005737",
+              "GO:0004022",
+              "GO:0008270",
+              "InterPro:IPR013149",
+              "InterPro:IPR013154",
+              "InterPro:IPR002328",
+              "InterPro:IPR011032",
+              "InterPro:IPR036291",
+              "InterPro:IPR020843",
+              "Pfam:PF08240",
+              "Pfam:PF00107",
+              "SMART:SM00829",
+              "SUPFAM:SSF50129",
+              "SUPFAM:SSF51735",
+              "PROSITE:PS00059"
           ],
-          "description": "Protein A51",
+          "description": "Alcohol dehydrogenase 6",
           "features": [
               {
                   "begin": "1",
-                  "description": "Protein A51",
-                  "end": "334",
+                  "description": "Alcohol dehydrogenase 6",
+                  "end": "376",
                   "type": "chain"
               },
               {
-                  "begin": "89",
-                  "description": "Poly-Asp",
-                  "end": "92",
-                  "type": "compositionally biased region"
+                  "begin": "200",
+                  "description": "NAD",
+                  "end": "205",
+                  "type": "nucleotide phosphate-binding region"
+              },
+              {
+                  "begin": "293",
+                  "description": "NAD",
+                  "end": "295",
+                  "type": "nucleotide phosphate-binding region"
+              },
+              {
+                  "description": "Zinc 1; catalytic",
+                  "position": "47",
+                  "type": "metal ion-binding site"
+              },
+              {
+                  "description": "Zinc 1; catalytic",
+                  "position": "69",
+                  "type": "metal ion-binding site"
+              },
+              {
+                  "description": "Zinc 2",
+                  "position": "99",
+                  "type": "metal ion-binding site"
+              },
+              {
+                  "description": "Zinc 2",
+                  "position": "102",
+                  "type": "metal ion-binding site"
+              },
+              {
+                  "description": "Zinc 2",
+                  "position": "105",
+                  "type": "metal ion-binding site"
+              },
+              {
+                  "description": "Zinc 2",
+                  "position": "113",
+                  "type": "metal ion-binding site"
+              },
+              {
+                  "description": "Zinc 1; catalytic",
+                  "position": "175",
+                  "type": "metal ion-binding site"
+              },
+              {
+                  "description": "NAD",
+                  "position": "224",
+                  "type": "binding site"
+              },
+              {
+                  "description": "NAD",
+                  "position": "229",
+                  "type": "binding site"
+              },
+              {
+                  "description": "NAD",
+                  "position": "371",
+                  "type": "binding site"
               }
           ],
-          "id": "UniProtKB/Swiss-Prot:Q01219",
+          "id": "UniProtKB/Swiss-Prot:Q5XI95",
           "keywords": [
               "Complete proteome",
-              "Reference proteome"
+              "Cytoplasm",
+              "Metal-binding",
+              "NAD",
+              "Oxidoreductase",
+              "Reference proteome",
+              "Zinc"
           ],
-          "organism": "Taxon:10254",
+          "organism": "Taxon:10116",
           "recommended_name": {
-              "full": "Protein A51"
+              "full": "Alcohol dehydrogenase 6"
           },
-          "sequence": "MDGVIVYCLNALVKHGEEINHIKNDFMIKPCCERVCEKVKNVHIGGQSKNNTVIADLPYMDNAVSDVCNSLYKKNVSRISRFANLIKIDDDDKTPTGVYNYFKPKDVIPVIISIGKDKDVCELLISSDISCACVELNSYHVAILPMDVSFFTKGNASLIILLFDFSIDAAPLLRSVTDNNVIISRHQRLHDELPSSNWFKFYISIKSDYCSILYMVVDGSVMHAIADNRTHAIISKNILDNTTINDECRCCYFEPQIRILDRDEMLNGSSCDMNRHCIMMNLPDVGKFGSSMLGKYEPDMIKIALSVAGNLIRNRDYIPGRRGYSYYVYGIASR"
+          "sequence": "MGTQGKVIRCKATVLWKPGAPLAIEEIEVAPPKAKEVRIKMVATGVCGTDIKHLDTQELSKFCPMIMGHEGVGIVESVGEGVSSVRTGDKVILLCIPQCGECKTCLNSKNNICTEIRLSKTHLASEGTSRITCKGKLVHQYIALGSFSEYTVLKEISVAKIDEGAPLEKVCIIGCGFATGYGAAINSAKVTPGSTCAVFGLGGVGLSVIIGCKAAGAARIIAVDINKDRFAKAKTVGATDCVDPRDFEKPIEEVLSDMIDGGVDFCFEVTGNTEAVGAALGSCHKDHGVCVTVGALASFTSTLSIRSHLFFSGRILKGSILGGWKTKEEIPKLVSDYMAKKFNIDPLITHTLTLSEANEAVQLMKSGQCIRCVLLL"
       }
   ]
