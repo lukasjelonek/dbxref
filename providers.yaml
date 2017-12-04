@@ -1,5 +1,5 @@
 - name: Enzyme
-  prefixes: [EC, Enzyme]
+  prefixes: ["EC"]
   resources:
       html: ["https://enzyme.expasy.org/EC/%i"]
       text: ["https://enzyme.expasy.org/EC/%i.txt"]

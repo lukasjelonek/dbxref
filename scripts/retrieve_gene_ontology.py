@@ -36,16 +36,20 @@ def main():
 	print (json.dumps(documents))
 
 def read_basic(d):
-	out = {'definition': d['results'][0]['definition']['text']}
+	out = {'definition': d['results'][0]['definition']['text'], 'synonyms': []}
 	out['name'] = d['results'][0]['name']
-	out['synonyms'] = d['results'][0]['synonyms']
+	if 'synonyms' in d['results'][0]:
+		out['synonyms'] = d['results'][0]['synonyms']
 	return (out)
 
 def read_relations(d):
-	out = {'relations': {'children': d['results'][0]['children']}}
-	for child in out['relations']['children']:
-		child['type'] = child.pop('relation')
-	out['relations']['parents'] = parse_history(d['results'][0]['history'])
+	out = {'relations': {'children': [], 'parents': []}}
+	if 'children' in d['results'][0]:
+		out['relations']['children'] = d['results'][0]['children']
+		for child in out['relations']['children']:
+			child['type'] = child.pop('relation')
+	if 'history' in d['results'][0]:
+		out['relations']['parents'] = parse_history(d['results'][0]['history'])
 	return (out)
 
 def parse_history(h):

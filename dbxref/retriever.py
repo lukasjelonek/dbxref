@@ -8,7 +8,7 @@ import json
 
 providers = load_providers()
 
-def retrieve(strings):
+def retrieve(strings, location=''):
     dbxrefs = list(map(convert_string_to_dbxref, strings))
     sorted(dbxrefs, key=lambda x: x['db'])
     results = []
@@ -17,22 +17,23 @@ def retrieve(strings):
             provider = providers[key]
             logger.debug('{0} is supported'.format(key))
             if provider['retriever']['type'] == 'external':
-                retrieved = load_with_external_provider(provider, list(dbxrefs))
+                retrieved = load_with_external_provider(provider, list(dbxrefs), location)
                 results.extend(retrieved)
             else:
                 raise Exception('Unknown retriever type', provider['retriever']['type'])
         else:
             logger.debug('{0} is not supported'.format(key))
             results.extend( map(lambda x: {'dbxref': toString(x), 'status': 'not supported'}, dbxrefs))
+    if not location == '':
+        return (results)
+    else:
+	    print(json.dumps(results, indent=4))
 
-    print(json.dumps(results, indent=4))
 
-    
-
-def load_with_external_provider(provider, dbxrefs):
+def load_with_external_provider(provider, dbxrefs, location):
     logger.debug('Loading {0} via external provider'.format(dbxrefs))
     script = provider['retriever']['location']
-    call = '{} {}'.format(script, ' '.join(list(map(toString, dbxrefs))))
+    call = location + '{} {}'.format(script, ' '.join(list(map(toString, dbxrefs))))
     logger.debug("Running '{}'".format(call))
     import subprocess
     result = subprocess.check_output(call, shell=True)
