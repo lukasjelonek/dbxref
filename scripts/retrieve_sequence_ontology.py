@@ -38,15 +38,16 @@ def main():
 				elements = []
 			else:
 				elements.append(line.strip())
-		d = resolve_elements(elements)
 		output = {'id': entry['dbxref']}
-		if 'id' in d and d['id'] == entry['dbxref'] and args.basic:
-			output.update(format_output(d))
-		if args.relations:
-			output['relations'] = resolve_relations(entry)
-		if 'id' in d and d['id'] == entry['dbxref'] and not args.basic and not args.relations:
-			output.update(format_output(d))
-			output['relations'] = resolve_relations(entry)
+		if not '<title>500 Internal Server Error</title>' in elements:
+			d = resolve_elements(elements)
+			if 'id' in d and d['id'] == entry['dbxref'] and args.basic:
+				output.update(format_output(d))
+			if args.relations:
+				output['relations'] = resolve_relations(entry)
+			if 'id' in d and d['id'] == entry['dbxref'] and not args.basic and not args.relations:
+				output.update(format_output(d))
+				output['relations'] = resolve_relations(entry)
 		documents.append(output)
 	print (json.dumps(documents))
 

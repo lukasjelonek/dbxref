@@ -23,7 +23,7 @@ def resolve(strings, check_existence=True):
     for s in strings:
         status = STATUS_NOT_CHECKED
         if check_existence:
-           status = check_dbxref_exists(s) 
+           status = check_dbxref_exists(s)
         dbxref = convert_string_to_dbxref(s)
         if dbxref['db'] in providers:
             provider = providers[dbxref['db']]
@@ -51,7 +51,7 @@ def check_dbxref_exists(string):
             return exists
         else:
             return STATUS_CHECK_NOT_SUPPORTED
-    return STATUS_UNSUPPORTED_DB 
+    return STATUS_UNSUPPORTED_DB
 
 def compile_url(template, dbxref):
     return template.replace('%i', dbxref['id']).replace('%d', dbxref['db'])

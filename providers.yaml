@@ -1,5 +1,5 @@
 - name: Enzyme
-  prefixes: ["EC"]
+  prefixes: ["EC", "ec"]
   resources:
       html: ["https://enzyme.expasy.org/EC/%i"]
       text: ["https://enzyme.expasy.org/EC/%i.txt"]
@@ -8,14 +8,14 @@
       type: 'external'
       location: 'scripts/retrieve_enzyme.py'
 - name: Gene Identifier
-  prefixes: [GI]
+  prefixes: ["GI", "gi"]
   resources:
       html: ["http://www.ncbi.nlm.nih.gov/protein/GI:%i"]
       xml: ["http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=protein&dopt=xml&sort=&val=%i&retmode=file"]
   # does not work
   # check_existence: "http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=protein&dopt=xml&sort=&val=%i&retmode=file"
 - name: Uniprot
-  prefixes: ["UniProtKB/TrEMBL", "UniProtKB/Swiss-Prot"]
+  prefixes: ["UniProtKB/TrEMBL", "UniProtKB/Swiss-Prot", "uniprotkb/trembl", "uniprotkb/swiss-prot"]
   resources:
       html: [ "http://www.uniprot.org/uniprot/%i"]
       xml: [ "http://www.uniprot.org/uniprot/%i.xml"]
@@ -30,7 +30,7 @@
       xml: ["http://www.uniprot.org/taxonomy/%i.rdf"]
   check_existence: "http://www.uniprot.org/taxonomy/%i"
 - name: SequenceOntology
-  prefixes: ["SO"]
+  prefixes: ["SO", "so"]
   resources:
       html: ["http://www.sequenceontology.org/browser/current_svn/term/SO:%i"]
       obo: ["http://www.sequenceontology.org/browser/current_svn/export/term_only/obo/SO:%i"]
@@ -41,7 +41,7 @@
       type: 'external'
       location: 'scripts/retrieve_sequence_ontology.py'
 - name: RFAM
-  prefixes: ["RFAM"]
+  prefixes: ["RFAM", "rfam"]
   resources:
       html: ["http://rfam.xfam.org/family/%i"]
       xml: ["http://rfam.xfam.org/family/%i?content-type=text%2Fxml"]
@@ -53,7 +53,7 @@
       html: ["http://www.ncbi.nlm.nih.gov/pubmed/%i"]
   check_existence: "http://www.ncbi.nlm.nih.gov/pubmed/%i"
 - name: Protein Families
-  prefixes: ["PFAM"]
+  prefixes: ["PFAM", "pfam"]
   resources:
       html: ["http://pfam.xfam.org/family/%i"]
       xml: ["http://pfam.xfam.org/family/%i?output=xml"]
@@ -63,26 +63,26 @@
       type: 'external'
       location: 'scripts/retrieve_pfam.py'
 - name: PDB
-  prefixes: ["PDB"]
+  prefixes: ["PDB", "pdb"]
   resources:
       html: ["http://www.rcsb.org/pdb/explore/explore.do?structureId=%i"]
       xml: ["http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=xml&compression=NO&structureId=%i"]
   check_existence: "http://www.rcsb.org/pdb/download/downloadFile.do?fileFormat=xml&compression=NO&structureId=%i"
 - name: InterPro
-  prefixes: ["InterPro"]
+  prefixes: ["InterPro", "interpro"]
   resources:
       html: ["http://www.ebi.ac.uk/interpro/entry/%i"]
   # does not work
   # check_existence: "http://www.ebi.ac.uk/interpro/entry/%i"
 - name: GeneID
-  prefixes: ["GeneID"]
+  prefixes: ["GeneID", "geneid"]
   resources:
       html: ["http://www.ncbi.nlm.nih.gov/gene/%i"]
       xml: ["http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=gene&dopt=xml&sort=&val=%i&retmode=file"]
   # does not work
   #  check_existence: "http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=gene&dopt=xml&sort=&val=%i&retmode=file"
 - name: Gene Ontology
-  prefixes: ["GO"]
+  prefixes: ["GO", "go"]
   resources:
       html: ["http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i"]
       xml: ["http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i&format=oboxml"]

@@ -37,21 +37,24 @@ def main():
         logger.debug('URL: %s', xml_url)
         r = requests.get(xml_url)
         logger.debug('Content: %s', r.text)
-        root = ET.fromstring(r.text)
 
         output = {'id': entry['dbxref']}
 
-        for child in root.findall('uniprot:entry', ns):
-            if args.basic:
-                output.update(read_basic(child))
-            if args.sequence:
-                output.update(read_sequence(child))
-            if args.organism:
-                output.update(read_taxonomy(child))
-            if args.annotation:
-                output.update(read_annotation(child))
-            if args.features:
-                output['features'] = read_features(child)
+        try:
+            root = ET.fromstring(r.text)
+            for child in root.findall('uniprot:entry', ns):
+                if args.basic:
+                    output.update(read_basic(child))
+                if args.sequence:
+                    output.update(read_sequence(child))
+                if args.organism:
+                    output.update(read_taxonomy(child))
+                if args.annotation:
+                    output.update(read_annotation(child))
+                if args.features:
+                    output['features'] = read_features(child)
+        except:
+            pass
         documents.append(output)
     print(json.dumps(documents))
 
