@@ -23,7 +23,7 @@ def retrieve(strings, location=''):
                 raise Exception('Unknown retriever type', provider['retriever']['type'])
         else:
             logger.debug('{0} is not supported'.format(key))
-            results.extend( map(lambda x: {'dbxref': toString(x), 'status': 'not supported'}, dbxrefs))
+            results.extend( map(lambda x: {'id': toString(x), 'status': 'not supported'}, dbxrefs))
     if not location == '':
         return (results)
     else:
