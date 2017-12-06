@@ -13,8 +13,8 @@ def retrieve(strings, location=''):
     sorted(dbxrefs, key=lambda x: x['db'])
     results = []
     for key, dbxrefs in groupby(dbxrefs, lambda x: x['db']):
-        if key in providers and 'retriever' in providers[key]:
-            provider = providers[key]
+        if key.lower() in providers and 'retriever' in providers[key.lower()]:
+            provider = providers[key.lower()]
             logger.debug('{0} is supported'.format(key))
             if provider['retriever']['type'] == 'external':
                 retrieved = load_with_external_provider(provider, list(dbxrefs), location)

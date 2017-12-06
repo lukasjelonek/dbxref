@@ -4,6 +4,7 @@ import dbxref.config
 import dbxref.resolver
 import requests
 import xml.etree.ElementTree as ET
+from bs4 import BeautifulSoup as BS
 import logging
 import json
 import argparse
@@ -54,7 +55,15 @@ def main():
                 if args.features:
                     output['features'] = read_features(child)
         except:
-            pass
+            soup = BS
+            try:
+                soup = BS(r.text.replace('\n', ' '), 'lxml')
+                output['message'] = 'an error occurred'
+                for child in soup.findAll('div'):
+                    if child.get('id') == 'noResultsMessage':
+                        output['message'] = 'no results found; probably invalid ID'
+            except:
+                pass
         documents.append(output)
     print(json.dumps(documents))
 

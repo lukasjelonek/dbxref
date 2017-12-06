@@ -34,15 +34,18 @@ def main():
 
         output = {'id': entry['dbxref']}
 
-        for child in root.findall('pfam:entry', ns):
-            if args.basic:
-                output.update(read_basic(child))
-            if args.annotation:
-                output.update(read_annotation(child))
+        tree = str(ET.tostring(root))
+        if '<error>' in tree:
+             output['message'] = tree[tree.find('<error>')+7:tree.rfind('</error>')]
+        else:
+            for child in root.findall('pfam:entry', ns):
+                if args.basic:
+                    output.update(read_basic(child))
+                if args.annotation:
+                    output.update(read_annotation(child))
         documents.append(output)
     print(json.dumps(documents))
 
-    
 def read_basic(entry):
     description = entry.find('pfam:description', ns).text.strip()
     return {'description': description}
@@ -60,8 +63,8 @@ def read_annotation(entry):
         terms = category.findall('pfam:term', ns)
         for term in terms:
             annotation['terms'].append({
-                'id': term.attrib['go_id'], 
-                'description': term.text 
+                'id': term.attrib['go_id'],
+                'description': term.text
                 })
     return annotation
 

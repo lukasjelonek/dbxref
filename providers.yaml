@@ -53,7 +53,7 @@
       html: ["http://www.ncbi.nlm.nih.gov/pubmed/%i"]
   check_existence: "http://www.ncbi.nlm.nih.gov/pubmed/%i"
 - name: Protein Families
-  prefixes: ["PFAM", "pfam"]
+  prefixes: ["PFAM", "Pfam", "pfam"]
   resources:
       html: ["http://pfam.xfam.org/family/%i"]
       xml: ["http://pfam.xfam.org/family/%i?output=xml"]

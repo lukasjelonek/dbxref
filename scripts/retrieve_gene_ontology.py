@@ -25,7 +25,9 @@ def main():
 		logger.debug('Content: %s', r.text)
 		d = json.loads(r.text)
 		output = {'id': entry['dbxref']}
-		if not 'messages' in d:
+		if 'messages' in d:
+			output['message'] = '; '.join(d['messages'])
+		else:
 			if args.basic:
 				output.update(read_basic(d))
 			if args.relations:
@@ -33,8 +35,6 @@ def main():
 			if not args.basic and not args.relations:
 				output.update(read_basic(d))
 				output.update(read_relations(d))
-		else:
-			output['messages'] = d['messages']
 		documents.append(output)
 	print (json.dumps(documents))
 
