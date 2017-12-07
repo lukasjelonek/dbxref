@@ -4,7 +4,7 @@ import dbxref.config
 import dbxref.resolver
 import requests
 import xml.etree.ElementTree as ET
-from bs4 import BeautifulSoup as BS
+import lxml.html as HTML
 import logging
 import json
 import argparse
@@ -40,7 +40,6 @@ def main():
         logger.debug('Content: %s', r.text)
 
         output = {'id': entry['dbxref']}
-
         try:
             root = ET.fromstring(r.text)
             for child in root.findall('uniprot:entry', ns):
@@ -55,13 +54,11 @@ def main():
                 if args.features:
                     output['features'] = read_features(child)
         except:
-            soup = BS
+            output['message'] = 'an error occurred'
             try:
-                soup = BS(r.text.replace('\n', ' '), 'lxml')
-                output['message'] = 'an error occurred'
-                for child in soup.findAll('div'):
-                    if child.get('id') == 'noResultsMessage':
-                        output['message'] = 'no results found; probably invalid ID'
+                html = HTML.document_fromstring(r.text.replace('\n', ' '))
+                if html.get_element_by_id('noResultsMessage') is not None:
+                    output['message'] = 'no results found; probably invalid ID'
             except:
                 pass
         documents.append(output)
@@ -147,7 +144,8 @@ def read_features(entry):
     features = []
     for f in entry.findall('uniprot:feature', ns):
         feature = {}
-        feature['description'] = f.attrib['description']
+        if 'description' in f.attrib:
+            feature['description'] = f.attrib['description']
         feature['type'] = f.attrib['type']
         if f.find('uniprot:location', ns).find('uniprot:position', ns) is not None:
             feature['position'] = f.find('uniprot:location', ns).find('uniprot:position', ns).attrib['position']

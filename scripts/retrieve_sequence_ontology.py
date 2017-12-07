@@ -7,7 +7,7 @@ import requests
 import logging
 import json
 import argparse
-from bs4 import BeautifulSoup as BS
+import lxml.html as HTML
 
 logger = logging.getLogger(__name__)
 
@@ -39,11 +39,11 @@ def main():
 			else:
 				elements.append(line.strip())
 		output = {'id': entry['dbxref']}
-		soup = BS(r.text.replace('\n', ' '), 'lxml')
-		if soup.find('title') is not None:
-			output['message'] = soup.head.title.string
-			if output['message'] == '500 Internal Server Error':
-				output['message'] += '; probably invalid ID'
+		html = HTML.document_fromstring(r.text.replace('\n', ' '))
+		if len(html) > 1:
+			output['message'] = 'an error occurred'
+			if html.head.text_content() == ' 500 Internal Server Error ':
+				output['message'] = '500 Internal Server Error; probably invalid ID'
 		else:
 			d = resolve_elements(elements)
 			if 'id' in d and d['id'] == entry['dbxref'] and args.basic:

@@ -8,7 +8,7 @@ import logging
 import json
 import argparse
 import re
-from bs4 import BeautifulSoup as BS
+import lxml.html as HTML
 
 logger = logging.getLogger(__name__)
 
@@ -31,12 +31,12 @@ def main():
 		comment = ""
 		reaction = ""
 		ls = r.text.replace('\n', ' ')
-		soup = BS(ls, 'lxml')
-		if soup.find('title') is not None:
-			output['message'] = soup.head.title.string
-			if output['message'] == '500 Internal Server Error':
-				output['message'] += '; probably invalid ID'
-		else:
+		try:
+			html = HTML.document_fromstring(ls).head.text_content()
+			output['message'] = html
+			if output['message'] == ' 500 Internal Server Error ':
+				output['message'] = '500 Internal Server Error; probably invalid ID'
+		except:
 			for line in lines:
 				line_elements = line.strip().split('   ')
 				if line_elements[0] == 'DE':
