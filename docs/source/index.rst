@@ -14,6 +14,7 @@ Welcome to DBXRef resolve and retrieval tool's documentation!
    gene_ontology
    pfam
    sequence_ontology
+   taxonomy
    uniprot
 
 
