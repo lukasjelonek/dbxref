@@ -16,6 +16,9 @@ def main():
 	parser.add_argument('--relations', '-r', action='store_true', help='Include id, parents and children')
 	parser.add_argument('dbxrefs', nargs=argparse.REMAINDER)
 	args = parser.parse_args()
+	if not args.basic and not args.relations:
+		args.basic = True
+		args.relations = True
 	resolved = dbxref.resolver.resolve(args.dbxrefs, check_existence=False)
 	documents = []
 	for entry in resolved:
@@ -31,9 +34,6 @@ def main():
 			if args.basic:
 				output.update(read_basic(d))
 			if args.relations:
-				output.update(read_relations(d))
-			if not args.basic and not args.relations:
-				output.update(read_basic(d))
 				output.update(read_relations(d))
 		documents.append(output)
 	print (json.dumps(documents))

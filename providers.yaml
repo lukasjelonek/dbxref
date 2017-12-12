@@ -27,6 +27,7 @@
   prefixes: ["Taxon", "taxon", "taxid"]
   resources:
       html: ["http://www.uniprot.org/taxonomy/%i"]
+      json: ["https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/tax-id/%i"]
       xml: ["http://www.uniprot.org/taxonomy/%i.rdf"]
       xml_ncbi: ["https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=%i"]
   check_existence: "http://www.uniprot.org/taxonomy/%i"
