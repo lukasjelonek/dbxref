@@ -2,14 +2,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 from dbxref.config import load_providers
-from dbxref.resolver import convert_string_to_dbxref
 from itertools import groupby
 import json
 
 providers = load_providers()
 
-def retrieve(strings, location=''):
-    dbxrefs = list(map(convert_string_to_dbxref, strings))
+def retrieve(dbxrefs, location=''):
     sorted(dbxrefs, key=lambda x: x['db'])
     results = []
     for key, dbxrefs in groupby(dbxrefs, lambda x: x['db']):

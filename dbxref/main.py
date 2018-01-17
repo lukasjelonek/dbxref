@@ -2,6 +2,7 @@
 import argparse
 import os
 import logging
+from dbxref import resolver
 
 def main():
     parser = argparse.ArgumentParser(description='Lookup locations of database cross references and retrieve them as json')
@@ -38,13 +39,12 @@ def info(args, config):
     print ('info')
 
 def resolve(args, config):
-    from dbxref import resolver
     import json
-    print(json.dumps(resolver.resolve(args.dbxrefs, check_existence=args.no_check)))
+    print(json.dumps(resolver.resolve(resolver.convert_to_dbxrefs(args.dbxrefs), check_existence=args.no_check)))
 
 def retrieve(args, config):
     from dbxref import retriever
-    retriever.retrieve(args.dbxrefs)
+    retriever.retrieve(resolver.convert_to_dbxrefs(args.dbxrefs))
 
 if __name__ == "__main__":
     main()

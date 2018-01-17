@@ -18,7 +18,7 @@ class TestDbxrefResolve(unittest.TestCase):
 
 
     def test_resolve_enzyme(self):
-        self.assertNotEqual(resolver.resolve(["EC:1.1.1.1"]), [])
+        self.assertNotEqual(resolver.resolve(resolver.convert_to_dbxrefs(["EC:1.1.1.1"])), [])
 
     def test_check_dbxref_exists(self):
         import logging
@@ -67,7 +67,7 @@ class TestDbxrefResolve(unittest.TestCase):
 
         for d in data:
             with self.subTest(d=d):
-                self.assertEqual(resolver.check_dbxref_exists(d[0]), d[1] )
+                self.assertEqual(resolver.check_dbxref_exists(resolver.convert_string_to_dbxref(d[0])), d[1] )
 
     def test_check_urls(self):
         import json
