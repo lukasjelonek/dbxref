@@ -29,7 +29,7 @@ output scheme::
           "dbxrefs": [
               "list of dbxrefs"
           ]
-          "deifinition": {
+          "definition": {
               "cofactors": [
                   "list of cofactors"
               ],
@@ -53,7 +53,7 @@ output scheme::
 
   [
       {
-          "deifinition": {
+          "definition": {
               "cofactors": [
                   "list of cofactors"
               ],
@@ -337,7 +337,7 @@ example output::
               "UniProtKB/Swiss-Prot:P33010",
               "UniProtKB/Swiss-Prot:O07737"
           ]
-          "deifinition": {
+          "definition": {
               "cofactors": [
                   "Zn(2+) or Fe cation."
               ],

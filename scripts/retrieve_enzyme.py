@@ -122,9 +122,9 @@ def read_basic(d):
 	if 'comments' in d:
 		definition['comments'] = d['comments']
 	if len(definition) == 1:
-		out['deifinition'] = definition[0]
+		out['definition'] = definition[0]
 	elif len(definition) > 1:
-		out['deifinition'] = definition
+		out['definition'] = definition
 	return (out)
 
 def format_output(d, args):
