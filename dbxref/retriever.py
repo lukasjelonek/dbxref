@@ -17,6 +17,11 @@ def retrieve(dbxrefs, location=''):
             if provider['retriever']['type'] == 'external':
                 retrieved = load_with_external_provider(provider, list(dbxrefs), location)
                 results.extend(retrieved)
+            elif provider['retriever']['type'] == 'internal':
+                import importlib
+                retrieve_method = getattr(importlib.import_module(provider['retriever']['location']), 'retrieve')
+                retrieved = retrieve_method(dbxrefs)
+                results.extend(retrieved)
             else:
                 raise Exception('Unknown retriever type', provider['retriever']['type'])
         else:
@@ -36,7 +41,6 @@ def load_with_external_provider(provider, dbxrefs, location):
     import subprocess
     result = subprocess.check_output(call, shell=True)
     return json.loads(result.decode('utf-8'))
-
 
 def toString(dbxref):
     return '{}:{}'.format(dbxref['db'], dbxref['id'])

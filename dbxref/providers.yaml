@@ -32,8 +32,8 @@
       xml_ncbi: ["https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=%i"]
   check_existence: "http://www.uniprot.org/taxonomy/%i"
   retriever:
-      type: 'external'
-      location: 'scripts/retrieve_taxonomy.py'
+      type: 'internal'
+      location: 'dbxref.retrieve.taxonomy'
 - name: SequenceOntology
   prefixes: ["SO", "so"]
   resources:
