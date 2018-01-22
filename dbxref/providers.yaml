@@ -21,8 +21,8 @@
       xml: [ "http://www.uniprot.org/uniprot/%i.xml"]
   check_existence: "http://www.uniprot.org/uniprot/%i.xml"
   retriever:
-      type: 'external'
-      location: 'scripts/retrieve_uniprot.py'
+      type: 'internal'
+      location: 'dbxref.retrieve.uniprot'
 - name: Taxonomy
   prefixes: ["Taxon", "taxon", "taxid"]
   resources:

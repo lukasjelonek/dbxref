@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-import env
-import dbxref.config
 import dbxref.resolver
 import requests
 import xml.etree.ElementTree as ET
@@ -31,7 +29,14 @@ def main():
         args.organism = True
         args.annotation = True
         args.features = True
-    resolved = dbxref.resolver.resolve(args.dbxrefs, check_existence=False)
+
+    dbxrefs = dbxref.resolver.convert_to_dbxrefs(args.dbxrefs)
+
+    documents = retrieve(dbxrefs, basic=args.basic, sequence=args.sequence, organism=args.organism, annotation=args.annotation, features=args.features)
+    print(json.dumps(documents))
+
+def retrieve(dbxrefs, basic=True, sequence=True, organism=True, annotation=True, features=True):
+    resolved = dbxref.resolver.resolve(dbxrefs, check_existence=False)
     documents = []
     for entry in resolved:
         xml_url = entry['locations']['xml'][0]
@@ -43,17 +48,18 @@ def main():
         try:
             root = ET.fromstring(r.text)
             for child in root.findall('uniprot:entry', ns):
-                if args.basic:
+                if basic:
                     output.update(read_basic(child))
-                if args.sequence:
+                if sequence:
                     output.update(read_sequence(child))
-                if args.organism:
+                if organism:
                     output.update(read_taxonomy(child))
-                if args.annotation:
+                if annotation:
                     output.update(read_annotation(child))
-                if args.features:
+                if features:
                     output['features'] = read_features(child)
-        except:
+        except RuntimeError as e:
+            print(e.message)
             output['message'] = 'an error occurred'
             try:
                 html = HTML.document_fromstring(r.text.replace('\n', ' '))
@@ -62,14 +68,18 @@ def main():
             except:
                 pass
         documents.append(output)
-    print(json.dumps(documents))
+    return documents
 
 def read_basic(entry):
     protein = entry.find('uniprot:protein', ns)
     recname = protein.find('uniprot:recommendedName', ns)
+    if recname is None:
+      # use submittedName if recommendedName is not available
+      recname = protein.find('uniprot:submittedName', ns)
     fullName = recname.find('uniprot:fullName', ns).text
     shortName = recname.find('uniprot:shortName', ns)
 
+    output = {}
     if shortName is not None:
         return {'description': fullName + '(' + shortName.text + ')'}
     else:
@@ -107,14 +117,21 @@ def read_dbrefs(entry):
     return refs
 
 def read_names(entry):
+    output = {}
     protein = entry.find('uniprot:protein', ns)
     recname = protein.find('uniprot:recommendedName', ns)
-    recommended_name = {
-            'full' : recname.find('uniprot:fullName', ns).text,
-            }
-    short = recname.find('uniprot:shortName', ns)
-    if short is not None:
-        recommended_name['short'] = short.text
+    if recname is not None:
+      output['recommended_name'] = { 'full' : recname.find('uniprot:fullName', ns).text }
+      short = recname.find('uniprot:shortName', ns)
+      if short is not None:
+          output['recommended_name']['short'] = short.text
+    subname = protein.find('uniprot:submittedName', ns)
+    if subname is not None:
+      output['submitted_name'] = { 'full' : subname.find('uniprot:fullName', ns).text }
+      short = subname.find('uniprot:shortName', ns)
+      if short is not None:
+          output['submitted_name']['short'] = short.text
+
     alternative_names = []
     altnames = protein.findall('uniprot:alternativeName', ns)
     for altname in altnames:
@@ -123,10 +140,9 @@ def read_names(entry):
         if short is not None:
             alternative_name['short'] = short.text
         alternative_names.append(alternative_name)
-    return {
-            'recommended_name': recommended_name,
-            'alternative_names': alternative_names
-           }
+    output['alternative_names'] = alternative_names
+
+    return output
 
 def read_accessions(entry):
     accessions = []
@@ -155,4 +171,5 @@ def read_features(entry):
         features.append (feature)
     return features
 
-main()
+if __name__ == '__main__':
+  main()
