@@ -5,8 +5,8 @@
       text: ["https://enzyme.expasy.org/EC/%i.txt"]
   check_existence: "https://enzyme.expasy.org/EC/%i.txt"
   retriever:
-      type: 'external'
-      location: 'scripts/retrieve_enzyme.py'
+      type: 'internal'
+      location: 'dbxref.retrieve.enzyme'
 - name: Gene Identifier
   prefixes: ["GI", "gi"]
   resources:

@@ -23,7 +23,8 @@ setup(
       'requests',
       'cachecontrol',
       'pyyaml',
-      'lockfile'
+      'lockfile',
+      'lxml'
     ],
     entry_points={ 
         'console_scripts': [
