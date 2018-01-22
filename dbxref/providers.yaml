@@ -65,8 +65,8 @@
   # does not work
   # check_existence: "http://pfam.xfam.org/family/%i?content-type=text%2Fxml"
   retriever:
-      type: 'external'
-      location: 'scripts/retrieve_pfam.py'
+      type: 'internal'
+      location: 'dbxref.retrieve.pfam'
 - name: PDB
   prefixes: ["PDB", "pdb"]
   resources:

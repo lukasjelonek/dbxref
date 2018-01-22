@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-import env
-import dbxref.config
 import dbxref.resolver
 import requests
 import xml.etree.ElementTree as ET
@@ -12,7 +10,7 @@ import argparse
 logger = logging.getLogger(__name__)
 #logger.setLevel(logging.DEBUG)
 
-ns = {'pfam': 'http://pfam.xfam.org/'}
+ns = {'pfam': 'https://pfam.xfam.org/'}
 
 def main():
     parser = argparse.ArgumentParser(description='Retrieve pfam xml documents for dbxrefs and convert them into json')
@@ -23,9 +21,16 @@ def main():
     if not (args.basic or args.annotation):
         args.basic = True
         args.annotation = True
-    resolved = dbxref.resolver.resolve(args.dbxrefs, check_existence=False)
+    dbxrefs = dbxref.resolver.convert_to_dbxrefs(args.dbxrefs)
+
+    documents = retrieve(dbxrefs, basic=args.basic, annotation=args.annotation)
+    print(json.dumps(documents))
+
+def retrieve(dbxrefs, basic=True, annotation=True):
+    resolved = dbxref.resolver.resolve(dbxrefs, check_existence=False)
     documents = []
     for entry in resolved:
+      if 'xml' in entry['locations']:
         xml_url = entry['locations']['xml'][0]
         logger.debug('URL: %s', xml_url)
         r = requests.get(xml_url)
@@ -39,12 +44,12 @@ def main():
              output['message'] = tree[tree.find('<error>')+7:tree.rfind('</error>')]
         else:
             for child in root.findall('pfam:entry', ns):
-                if args.basic:
+                if basic:
                     output.update(read_basic(child))
-                if args.annotation:
+                if annotation:
                     output.update(read_annotation(child))
         documents.append(output)
-    print(json.dumps(documents))
+    return documents
 
 def read_basic(entry):
     description = entry.find('pfam:description', ns).text.strip()
@@ -68,4 +73,5 @@ def read_annotation(entry):
                 })
     return annotation
 
-main()
+if __name__ == "__main__":
+  main()
