@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-
-import env
-import dbxref.config
 import dbxref.resolver
 import requests
 import logging
@@ -18,8 +15,14 @@ def main():
 	args = parser.parse_args()
 	if not args.basic and not args.relations:
 		args.basic = True
-		args.relations = True
-	resolved = dbxref.resolver.resolve(args.dbxrefs, check_existence=False)
+		args.relations = False
+	dbxrefs = dbxref.resolver.convert_to_dbxrefs(args.dbxrefs)
+
+	documents = retrieve(dbxrefs, basic=args.basic, relations=args.relations)
+	print(json.dumps(documents))
+
+def retrieve(dbxrefs, basic=True, relations=False):
+	resolved = dbxref.resolver.resolve(dbxrefs, check_existence=False)
 	documents = []
 	for entry in resolved:
 		json_url = entry['locations']['json'][0]
@@ -31,12 +34,12 @@ def main():
 		if 'messages' in d:
 			output['message'] = '; '.join(d['messages'])
 		else:
-			if args.basic:
+			if basic:
 				output.update(read_basic(d))
-			if args.relations:
+			if relations:
 				output.update(read_relations(d))
 		documents.append(output)
-	print (json.dumps(documents))
+	return documents
 
 def read_basic(d):
 	out = {'definition': d['results'][0]['definition']['text'], 'synonyms': []}
@@ -86,4 +89,5 @@ def parse_text(t):
 	out['type'] = type
 	return (out)
 
-main()
+if __name__ == '__main__':
+	main()

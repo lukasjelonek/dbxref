@@ -94,8 +94,8 @@
       json: ["https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/GO:%i/complete"]
   check_existence: "http://purl.obolibrary.org/obo/GO_%i"
   retriever:
-      type: 'external'
-      location: 'scripts/retrieve_gene_ontology.py'
+      type: 'internal'
+      location: 'dbxref.retrieve.gene_ontology'
 - name: HTTP
   prefixes: ["http", "https"]
   resources:
