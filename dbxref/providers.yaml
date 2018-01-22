@@ -43,8 +43,8 @@
   # does not work
   # check_existence: "http://www.sequenceontology.org/browser/current_svn/term/SO:%i"
   retriever:
-      type: 'external'
-      location: 'scripts/retrieve_sequence_ontology.py'
+      type: 'internal'
+      location: 'dbxref.retrieve.sequence_ontology'
 - name: RFAM
   prefixes: ["RFAM", "rfam"]
   resources:
