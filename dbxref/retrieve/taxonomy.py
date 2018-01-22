@@ -56,7 +56,12 @@ def read_basic(d):
   if 'commonName' in d:
     out['commonName'] = d['commonName']
   if 'lineage' in d:
-    out['lineage'] = d['lineage']
+    # the lineage string contains a ';' separated list, that is converted here
+    # into a true list
+    lineage_list = d['lineage'].split("; ")
+    if not lineage_list[-1].strip():
+      lineage_list = lineage_list[:-1]
+    out['lineage'] = lineage_list
   if 'rank' in d:
     out['rank'] = d['rank']
   return (out)
