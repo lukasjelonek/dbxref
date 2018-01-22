@@ -1,4 +1,3 @@
-import tests.env
 import unittest
 from dbxref import config
 
