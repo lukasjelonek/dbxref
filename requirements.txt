@@ -1,0 +1,6 @@
+requests
+cachecontrol
+pyyaml
+lockfile
+lxml
+pbr

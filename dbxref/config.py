@@ -10,7 +10,10 @@ def _load_providers(path):
     data = []
     with open(path) as data_file:
         data = yaml.load(data_file)
-    return normalize_index(index_providers(data))
+    return data
+
+def load_indexed_providers():
+    return normalize_index(index_providers(load_providers()))
 
 def index_providers(providers):
     index = {}
@@ -24,10 +27,10 @@ def normalize_index(index):
     return {k.lower():v for (k,v) in index.items()}
 
 def has_provider(provider):
-    return _has_provider(load_providers(), provider)
+    return _has_provider(load_indexed_providers(), provider)
 
 def _has_provider(providers, provider):
     return provider.lower() in providers
 
 def get_provider(provider):
-    return load_providers()[provider.lower()]
+    return load_indexed_providers()[provider.lower()]
