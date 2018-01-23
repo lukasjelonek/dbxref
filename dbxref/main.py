@@ -7,8 +7,10 @@ from dbxref import resolver, config
 from pbr.version import VersionInfo
 import json
 
+__version__ = VersionInfo('dbxref').semantic_version().release_string()
+
 def main():
-    parser = argparse.ArgumentParser(description='Version ' + str(VersionInfo('dbxref')) + '\nLookup locations of database cross references and retrieve them as json', formatter_class=RawTextHelpFormatter)
+    parser = argparse.ArgumentParser(description='Version ' + __version__ + '\nLookup locations of database cross references and retrieve them as json', formatter_class=RawTextHelpFormatter)
     parser.set_defaults(func=help)
 
     subparsers = parser.add_subparsers()
@@ -37,16 +39,15 @@ def help(args, config):
     args.parser.print_help()
 
 def info(args, cfg):
-    v = VersionInfo('dbxref')
-    print ('dbxref version ' + str(v))
+    print ('dbxref Version ' + __version__)
     print ('')
     print ('Supported dbxref databases:')
     providers = config.load_providers()
     for key in providers:
       provider = providers[key]
       print ('   ' + provider['name'])
-      print ('     ' + str.join(', ', [x for x in provider['prefixes']]))
-      print ('     ' + str.join(', ', [x for x in provider['resources']]))
+      print ('     Prefixes: ' + str.join(', ', [x for x in provider['prefixes']]))
+      print ('     Formats : ' + str.join(', ', [x for x in provider['resources']]))
 
 def resolve(args, config):
     print(json.dumps(resolver.resolve(resolver.convert_to_dbxrefs(args.dbxrefs), check_existence=args.no_check)))
