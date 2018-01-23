@@ -1,18 +1,16 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from dbxref.config import load_providers
+from dbxref import config
 from itertools import groupby
 import json
 
-providers = load_providers()
-
 def retrieve(dbxrefs):
-    sorted(dbxrefs, key=lambda x: x['db'])
+    sorted(dbxrefs, key=lambda x: x['db'].lower()) # normalize db to lowercase to allow differently cased notations
     results = []
     for key, dbxrefs in groupby(dbxrefs, lambda x: x['db']):
-        if key.lower() in providers and 'retriever' in providers[key.lower()]:
-            provider = providers[key.lower()]
+        if config.has_provider(key):
+            provider = config.get_provider(key)
             logger.debug('{0} is supported'.format(key))
             if provider['retriever']['type'] == 'external':
                 results.extend( load_with_external_provider(provider, list(dbxrefs)))

@@ -4,8 +4,7 @@ from cachecontrol.caches.file_cache import FileCache
 import logging
 logger = logging.getLogger(__name__)
 
-from dbxref.config import load_providers
-providers = load_providers()
+from dbxref import config
 
 cache = FileCache(".web_cache", forever=True)
 sess = CacheControl(requests.Session(), cache=cache)
@@ -24,8 +23,8 @@ def resolve(dbxrefs, check_existence=True):
         status = STATUS_NOT_CHECKED
         if check_existence:
            status = check_dbxref_exists(dbxref)
-        if dbxref['db'] in providers:
-            provider = providers[dbxref['db']]
+        if config.has_provider(dbxref['db']):
+            provider = config.get_provider(dbxref['db'])
             locations = {}
             for _type in provider['resources']:
                 urls = []
@@ -42,8 +41,8 @@ def convert_to_dbxrefs(strings):
   return list(map(convert_string_to_dbxref, strings))
 
 def check_dbxref_exists(dbxref):
-    if dbxref['db'] in providers:
-        provider = providers[dbxref['db']]
+    if config.has_provider(dbxref['db']):
+        provider = config.get_provider(dbxref['db'])
         urls = []
         exists = STATUS_NOT_CHECKED
         if 'check_existence' in provider:
