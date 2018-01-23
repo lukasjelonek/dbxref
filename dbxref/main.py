@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
 import argparse
+from argparse import RawTextHelpFormatter
 import os
 import logging
-from dbxref import resolver
+from dbxref import resolver, config
+from pbr.version import VersionInfo
 import json
 
 def main():
-    parser = argparse.ArgumentParser(description='Lookup locations of database cross references and retrieve them as json')
+    parser = argparse.ArgumentParser(description='Version ' + str(VersionInfo('dbxref')) + '\nLookup locations of database cross references and retrieve them as json', formatter_class=RawTextHelpFormatter)
     parser.set_defaults(func=help)
 
     subparsers = parser.add_subparsers()
     info_parser = subparsers.add_parser('info')
     info_parser.set_defaults(func=info)
-    #TODO implement
 
     resolve_parser = subparsers.add_parser('resolve')
     resolve_parser.add_argument('dbxrefs', nargs=argparse.REMAINDER)
@@ -26,7 +27,7 @@ def main():
     retrieve_parser.add_argument('--verbose', '-v', action='store_true', default=False, help="Show debug output")
 
     args = parser.parse_args()
-    config = {} # TODO implement
+    config = {} # implement when needed
     if ('verbose' in vars(args) and args.verbose):
         logging.basicConfig(level=logging.INFO)
     args.parser = parser
@@ -35,9 +36,17 @@ def main():
 def help(args, config):
     args.parser.print_help()
 
-def info(args, config):
-    #TODO implement
-    print ('info')
+def info(args, cfg):
+    v = VersionInfo('dbxref')
+    print ('dbxref version ' + str(v))
+    print ('')
+    print ('Supported dbxref databases:')
+    providers = config.load_providers()
+    for key in providers:
+      provider = providers[key]
+      print ('   ' + provider['name'])
+      print ('     ' + str.join(', ', [x for x in provider['prefixes']]))
+      print ('     ' + str.join(', ', [x for x in provider['resources']]))
 
 def resolve(args, config):
     print(json.dumps(resolver.resolve(resolver.convert_to_dbxrefs(args.dbxrefs), check_existence=args.no_check)))

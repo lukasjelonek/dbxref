@@ -3,3 +3,4 @@ cachecontrol
 pyyaml
 lockfile
 lxml
+pbr
