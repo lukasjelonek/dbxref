@@ -4,8 +4,7 @@ from cachecontrol.caches.file_cache import FileCache
 import logging
 logger = logging.getLogger(__name__)
 
-from dbxref.config import load_providers
-providers = load_providers()
+from dbxref import config
 
 cache = FileCache(".web_cache", forever=True)
 sess = CacheControl(requests.Session(), cache=cache)
@@ -18,15 +17,14 @@ STATUS_CHECK_NOT_SUPPORTED='check of status not supported'
 STATUS_CHECK_TIMEOUT='status check timed out'
 STATUS_UNSUPPORTED_DB='database unsupported'
 
-def resolve(strings, check_existence=True):
+def resolve(dbxrefs, check_existence=True):
     results = []
-    for s in strings:
+    for dbxref in dbxrefs:
         status = STATUS_NOT_CHECKED
         if check_existence:
-           status = check_dbxref_exists(s) 
-        dbxref = convert_string_to_dbxref(s)
-        if dbxref['db'] in providers:
-            provider = providers[dbxref['db']]
+           status = check_dbxref_exists(dbxref)
+        if config.has_provider(dbxref['db']):
+            provider = config.get_provider(dbxref['db'])
             locations = {}
             for _type in provider['resources']:
                 urls = []
@@ -38,10 +36,13 @@ def resolve(strings, check_existence=True):
             results.append({'dbxref': dbxref['db'] + ':' + dbxref['id'], 'status': STATUS_UNSUPPORTED_DB})
     return results
 
-def check_dbxref_exists(string):
-    dbxref = convert_string_to_dbxref(string)
-    if dbxref['db'] in providers:
-        provider = providers[dbxref['db']]
+def convert_to_dbxrefs(strings):
+  '''convert a list of strings to dbxref maps with db and id attribute'''
+  return list(map(convert_string_to_dbxref, strings))
+
+def check_dbxref_exists(dbxref):
+    if config.has_provider(dbxref['db']):
+        provider = config.get_provider(dbxref['db'])
         urls = []
         exists = STATUS_NOT_CHECKED
         if 'check_existence' in provider:
@@ -51,7 +52,7 @@ def check_dbxref_exists(string):
             return exists
         else:
             return STATUS_CHECK_NOT_SUPPORTED
-    return STATUS_UNSUPPORTED_DB 
+    return STATUS_UNSUPPORTED_DB
 
 def compile_url(template, dbxref):
     return template.replace('%i', dbxref['id']).replace('%d', dbxref['db'])

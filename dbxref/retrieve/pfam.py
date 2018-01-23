@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-import env
-import dbxref.config
 import dbxref.resolver
 import requests
 import xml.etree.ElementTree as ET
@@ -12,7 +10,7 @@ import argparse
 logger = logging.getLogger(__name__)
 #logger.setLevel(logging.DEBUG)
 
-ns = {'pfam': 'http://pfam.xfam.org/'}
+ns = {'pfam': 'https://pfam.xfam.org/'}
 
 def main():
     parser = argparse.ArgumentParser(description='Retrieve pfam xml documents for dbxrefs and convert them into json')
@@ -20,37 +18,46 @@ def main():
     parser.add_argument('--annotation', '-a', action='store_true', help='Include annotation')
     parser.add_argument('dbxrefs', nargs=argparse.REMAINDER)
     args = parser.parse_args()
-
     if not (args.basic or args.annotation):
         args.basic = True
         args.annotation = True
-    resolved = dbxref.resolver.resolve(args.dbxrefs, check_existence=False)
+    dbxrefs = dbxref.resolver.convert_to_dbxrefs(args.dbxrefs)
+
+    documents = retrieve(dbxrefs, basic=args.basic, annotation=args.annotation)
+    print(json.dumps(documents))
+
+def retrieve(dbxrefs, basic=True, annotation=True):
+    resolved = dbxref.resolver.resolve(dbxrefs, check_existence=False)
     documents = []
     for entry in resolved:
+      if 'xml' in entry['locations']:
         xml_url = entry['locations']['xml'][0]
         logger.debug('URL: %s', xml_url)
         r = requests.get(xml_url)
         logger.debug('Content: %s', r.text)
         root = ET.fromstring(r.text)
 
-        output = {'dbxref': entry['dbxref']}
+        output = {'id': entry['dbxref']}
 
-        for child in root.findall('pfam:entry', ns):
-            if args.basic:
-                output.update(read_basic(child))
-            if args.annotation:
-                output.update(read_annotation(child))
+        tree = str(ET.tostring(root))
+        if '<error>' in tree:
+             output['message'] = tree[tree.find('<error>')+7:tree.rfind('</error>')]
+        else:
+            for child in root.findall('pfam:entry', ns):
+                if basic:
+                    output.update(read_basic(child))
+                if annotation:
+                    output.update(read_annotation(child))
         documents.append(output)
-    print(json.dumps(documents))
+    return documents
 
-    
 def read_basic(entry):
     description = entry.find('pfam:description', ns).text.strip()
     return {'description': description}
 
 def read_annotation(entry):
     annotation = {
-            'id': entry.attrib['id'],
+            'domain': entry.attrib['id'],
             'accession': entry.attrib['accession'],
             'terms' : [],
             'comment': entry.find('pfam:comment', ns).text.strip()
@@ -61,9 +68,10 @@ def read_annotation(entry):
         terms = category.findall('pfam:term', ns)
         for term in terms:
             annotation['terms'].append({
-                'id': term.attrib['go_id'], 
-                'description': term.text 
+                'id': term.attrib['go_id'],
+                'description': term.text
                 })
     return annotation
 
-main()
+if __name__ == "__main__":
+  main()

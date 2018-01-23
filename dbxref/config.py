@@ -1,17 +1,16 @@
-def get_install_location():
-    """Finds the location directory of the tool"""
-    import os
-    script_path = os.path.realpath(__file__)
-    script_dir = os.path.dirname(script_path)
-    install_dir = os.path.dirname(script_dir)
-    return install_dir
+def get_providers_path():
+    import pkg_resources
+    return pkg_resources.resource_filename('dbxref', 'providers.yaml')
 
 def load_providers():
+    return _load_providers(get_providers_path())
+
+def _load_providers(path):
     import yaml
     data = []
-    with open(get_install_location() + '/providers.yaml') as data_file:
+    with open(path) as data_file:
         data = yaml.load(data_file)
-    return index_providers(data)
+    return normalize_index(index_providers(data))
 
 def index_providers(providers):
     index = {}
@@ -19,3 +18,16 @@ def index_providers(providers):
         for db in p['prefixes']:
             index[db] = p
     return index
+
+def normalize_index(index):
+    'create a new index with lowercase keys'
+    return {k.lower():v for (k,v) in index.items()}
+
+def has_provider(provider):
+    return _has_provider(load_providers(), provider)
+
+def _has_provider(providers, provider):
+    return provider.lower() in providers
+
+def get_provider(provider):
+    return load_providers()[provider.lower()]

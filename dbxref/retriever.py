@@ -1,33 +1,27 @@
 import logging
 logger = logging.getLogger(__name__)
 
-from dbxref.config import load_providers
-from dbxref.resolver import convert_string_to_dbxref
+from dbxref import config
 from itertools import groupby
 import json
 
-providers = load_providers()
-
-def retrieve(strings):
-    dbxrefs = list(map(convert_string_to_dbxref, strings))
-    sorted(dbxrefs, key=lambda x: x['db'])
+def retrieve(dbxrefs):
+    sorted(dbxrefs, key=lambda x: x['db'].lower()) # normalize db to lowercase to allow differently cased notations
     results = []
     for key, dbxrefs in groupby(dbxrefs, lambda x: x['db']):
-        if key in providers and 'retriever' in providers[key]:
-            provider = providers[key]
+        if config.has_provider(key):
+            provider = config.get_provider(key)
             logger.debug('{0} is supported'.format(key))
             if provider['retriever']['type'] == 'external':
-                retrieved = load_with_external_provider(provider, list(dbxrefs))
-                results.extend(retrieved)
+                results.extend( load_with_external_provider(provider, list(dbxrefs)))
+            elif provider['retriever']['type'] == 'internal':
+                results.extend(load_with_internal_provider(provider, list(dbxrefs)))
             else:
                 raise Exception('Unknown retriever type', provider['retriever']['type'])
         else:
             logger.debug('{0} is not supported'.format(key))
-            results.extend( map(lambda x: {'dbxref': toString(x), 'status': 'not supported'}, dbxrefs))
-
-    print(json.dumps(results, indent=4))
-
-    
+            results.extend( map(lambda x: {'id': toString(x), 'status': 'not supported'}, dbxrefs))
+    return (results)
 
 def load_with_external_provider(provider, dbxrefs):
     logger.debug('Loading {0} via external provider'.format(dbxrefs))
@@ -38,6 +32,11 @@ def load_with_external_provider(provider, dbxrefs):
     result = subprocess.check_output(call, shell=True)
     return json.loads(result.decode('utf-8'))
 
+def load_with_internal_provider(provider, dbxrefs):
+    import importlib
+    retrieve_method = getattr(importlib.import_module(provider['retriever']['location']), 'retrieve')
+    retrieved = retrieve_method(dbxrefs)
+    return retrieved
 
 def toString(dbxref):
     return '{}:{}'.format(dbxref['db'], dbxref['id'])

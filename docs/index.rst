@@ -10,6 +10,13 @@ Welcome to DBXRef resolve and retrieval tool's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   enzymes
+   gene_ontology
+   pfam
+   sequence_ontology
+   taxonomy
+   uniprot
+
 
 
 Indices and tables

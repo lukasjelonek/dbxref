@@ -1,10 +1,14 @@
 - name: Enzyme
-  prefixes: [EC, Enzyme]
+  prefixes: ["EC"]
   resources:
-      html: ["http://enzyme.expasy.org/EC/%i"]
-  check_existence: "http://enzyme.expasy.org/EC/%i.txt"
+      html: ["https://enzyme.expasy.org/EC/%i"]
+      text: ["https://enzyme.expasy.org/EC/%i.txt"]
+  check_existence: "https://enzyme.expasy.org/EC/%i.txt"
+  retriever:
+      type: 'internal'
+      location: 'dbxref.retrieve.enzyme'
 - name: Gene Identifier
-  prefixes: [GI]
+  prefixes: ["GI"]
   resources:
       html: ["http://www.ncbi.nlm.nih.gov/protein/GI:%i"]
       xml: ["http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=protein&dopt=xml&sort=&val=%i&retmode=file"]
@@ -17,20 +21,30 @@
       xml: [ "http://www.uniprot.org/uniprot/%i.xml"]
   check_existence: "http://www.uniprot.org/uniprot/%i.xml"
   retriever:
-      type: 'external'
-      location: 'scripts/retrieve_uniprot.py'
+      type: 'internal'
+      location: 'dbxref.retrieve.uniprot'
 - name: Taxonomy
-  prefixes: ["Taxon", "taxon", "taxid"]
+  prefixes: ["Taxon", "taxid"]
   resources:
       html: ["http://www.uniprot.org/taxonomy/%i"]
+      json: ["https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/tax-id/%i"]
       xml: ["http://www.uniprot.org/taxonomy/%i.rdf"]
+      xml_ncbi: ["https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=%i"]
   check_existence: "http://www.uniprot.org/taxonomy/%i"
+  retriever:
+      type: 'internal'
+      location: 'dbxref.retrieve.taxonomy'
 - name: SequenceOntology
   prefixes: ["SO"]
   resources:
       html: ["http://www.sequenceontology.org/browser/current_svn/term/SO:%i"]
+      obo: ["http://www.sequenceontology.org/browser/current_svn/export/term_only/obo/SO:%i"]
+      tsv: ["http://www.sequenceontology.org/browser/current_svn/export/term_only/csv_text/SO:%i"]
   # does not work
   # check_existence: "http://www.sequenceontology.org/browser/current_svn/term/SO:%i"
+  retriever:
+      type: 'internal'
+      location: 'dbxref.retrieve.sequence_ontology'
 - name: RFAM
   prefixes: ["RFAM"]
   resources:
@@ -39,7 +53,7 @@
   # does not work
   # check_existence: "http://rfam.xfam.org/family/%i?content-type=text%2Fxml"
 - name: Pubmed
-  prefixes: ["pubmed", "Pubmed"]
+  prefixes: ["Pubmed"]
   resources:
       html: ["http://www.ncbi.nlm.nih.gov/pubmed/%i"]
   check_existence: "http://www.ncbi.nlm.nih.gov/pubmed/%i"
@@ -50,6 +64,9 @@
       xml: ["http://pfam.xfam.org/family/%i?output=xml"]
   # does not work
   # check_existence: "http://pfam.xfam.org/family/%i?content-type=text%2Fxml"
+  retriever:
+      type: 'internal'
+      location: 'dbxref.retrieve.pfam'
 - name: PDB
   prefixes: ["PDB"]
   resources:
@@ -74,7 +91,11 @@
   resources:
       html: ["http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i"]
       xml: ["http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i&format=oboxml"]
+      json: ["https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/GO:%i/complete"]
   check_existence: "http://purl.obolibrary.org/obo/GO_%i"
+  retriever:
+      type: 'internal'
+      location: 'dbxref.retrieve.gene_ontology'
 - name: HTTP
   prefixes: ["http", "https"]
   resources:

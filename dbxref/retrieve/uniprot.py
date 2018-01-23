@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-import env
-import dbxref.config
 import dbxref.resolver
 import requests
 import xml.etree.ElementTree as ET
+import lxml.html as HTML
 import logging
 import json
 import argparse
@@ -16,11 +15,11 @@ ns = {'uniprot': 'http://uniprot.org/uniprot'}
 
 def main():
     parser = argparse.ArgumentParser(description='Retrieve uniprot xml documents for dbxrefs and convert them into json')
-    parser.add_argument('--basic', '-b', action='store_true', help='Include dbxref and description')
+    parser.add_argument('--basic', '-b', action='store_true', help='Include id and description')
     parser.add_argument('--sequence', '-s', action='store_true', help='Include sequence')
     parser.add_argument('--organism', '-o', action='store_true', help='Include organism info')
     parser.add_argument('--annotation', '-a', action='store_true', help='Include annotation')
-    parser.add_argument('--features', '-f', action='store_true', help='Include features (NOT IMPLEMENTED YET)')
+    parser.add_argument('--features', '-f', action='store_true', help='Include features')
     parser.add_argument('dbxrefs', nargs=argparse.REMAINDER)
     args = parser.parse_args()
 
@@ -30,38 +29,57 @@ def main():
         args.organism = True
         args.annotation = True
         args.features = True
-    resolved = dbxref.resolver.resolve(args.dbxrefs, check_existence=False)
+
+    dbxrefs = dbxref.resolver.convert_to_dbxrefs(args.dbxrefs)
+
+    documents = retrieve(dbxrefs, basic=args.basic, sequence=args.sequence, organism=args.organism, annotation=args.annotation, features=args.features)
+    print(json.dumps(documents))
+
+def retrieve(dbxrefs, basic=True, sequence=True, organism=True, annotation=True, features=True):
+    resolved = dbxref.resolver.resolve(dbxrefs, check_existence=False)
     documents = []
     for entry in resolved:
         xml_url = entry['locations']['xml'][0]
         logger.debug('URL: %s', xml_url)
         r = requests.get(xml_url)
         logger.debug('Content: %s', r.text)
-        root = ET.fromstring(r.text)
 
-        output = {'dbxref': entry['dbxref']}
-
-        for child in root.findall('uniprot:entry', ns):
-            if args.basic:
-                output.update(read_basic(child))
-            if args.sequence:
-                output.update(read_sequence(child))
-            if args.organism:
-                output.update(read_taxonomy(child))
-            if args.annotation:
-                output.update(read_annotation(child))
-            if args.features:
-                output.update(read_features(child))
+        output = {'id': entry['dbxref']}
+        try:
+            root = ET.fromstring(r.text)
+            for child in root.findall('uniprot:entry', ns):
+                if basic:
+                    output.update(read_basic(child))
+                if sequence:
+                    output.update(read_sequence(child))
+                if organism:
+                    output.update(read_taxonomy(child))
+                if annotation:
+                    output.update(read_annotation(child))
+                if features:
+                    output['features'] = read_features(child)
+        except RuntimeError as e:
+            print(e.message)
+            output['message'] = 'an error occurred'
+            try:
+                html = HTML.document_fromstring(r.text.replace('\n', ' '))
+                if html.get_element_by_id('noResultsMessage') is not None:
+                    output['message'] = 'no results found; probably invalid ID'
+            except:
+                pass
         documents.append(output)
-    print(json.dumps(documents))
+    return documents
 
-    
 def read_basic(entry):
     protein = entry.find('uniprot:protein', ns)
     recname = protein.find('uniprot:recommendedName', ns)
+    if recname is None:
+      # use submittedName if recommendedName is not available
+      recname = protein.find('uniprot:submittedName', ns)
     fullName = recname.find('uniprot:fullName', ns).text
     shortName = recname.find('uniprot:shortName', ns)
 
+    output = {}
     if shortName is not None:
         return {'description': fullName + '(' + shortName.text + ')'}
     else:
@@ -81,7 +99,7 @@ def read_taxonomy(entry):
 def read_annotation(entry):
     annotation = {
             'accessions': read_accessions(entry),
-            'dbxrefs' : read_dbrefs(entry), 
+            'dbxrefs' : read_dbrefs(entry),
             'keywords': read_keywords(entry)
             }
     annotation.update(read_names(entry))
@@ -99,14 +117,21 @@ def read_dbrefs(entry):
     return refs
 
 def read_names(entry):
+    output = {}
     protein = entry.find('uniprot:protein', ns)
     recname = protein.find('uniprot:recommendedName', ns)
-    recommended_name = {
-            'full' : recname.find('uniprot:fullName', ns).text, 
-            }
-    short = recname.find('uniprot:shortName', ns)
-    if short is not None:
-        recommended_name['short'] = short.text
+    if recname is not None:
+      output['recommended_name'] = { 'full' : recname.find('uniprot:fullName', ns).text }
+      short = recname.find('uniprot:shortName', ns)
+      if short is not None:
+          output['recommended_name']['short'] = short.text
+    subname = protein.find('uniprot:submittedName', ns)
+    if subname is not None:
+      output['submitted_name'] = { 'full' : subname.find('uniprot:fullName', ns).text }
+      short = subname.find('uniprot:shortName', ns)
+      if short is not None:
+          output['submitted_name']['short'] = short.text
+
     alternative_names = []
     altnames = protein.findall('uniprot:alternativeName', ns)
     for altname in altnames:
@@ -115,10 +140,9 @@ def read_names(entry):
         if short is not None:
             alternative_name['short'] = short.text
         alternative_names.append(alternative_name)
-    return { 
-            'recommended_name': recommended_name,
-            'alternative_names': alternative_names
-           }
+    output['alternative_names'] = alternative_names
+
+    return output
 
 def read_accessions(entry):
     accessions = []
@@ -133,6 +157,19 @@ def read_keywords(entry):
     return keywords
 
 def read_features(entry):
-    return {}
+    features = []
+    for f in entry.findall('uniprot:feature', ns):
+        feature = {}
+        if 'description' in f.attrib:
+            feature['description'] = f.attrib['description']
+        feature['type'] = f.attrib['type']
+        if f.find('uniprot:location', ns).find('uniprot:position', ns) is not None:
+            feature['position'] = f.find('uniprot:location', ns).find('uniprot:position', ns).attrib['position']
+        else:
+            feature['begin'] = f.find('uniprot:location', ns).find('uniprot:begin', ns).attrib['position']
+            feature['end'] = f.find('uniprot:location', ns).find('uniprot:end', ns).attrib['position']
+        features.append (feature)
+    return features
 
-main()
+if __name__ == '__main__':
+  main()
