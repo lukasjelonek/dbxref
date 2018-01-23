@@ -43,8 +43,7 @@ def info(args, cfg):
     print ('')
     print ('Supported dbxref databases:')
     providers = config.load_providers()
-    for key in providers:
-      provider = providers[key]
+    for provider in providers:
       print ('   ' + provider['name'])
       print ('     Prefixes: ' + str.join(', ', [x for x in provider['prefixes']]))
       print ('     Formats : ' + str.join(', ', [x for x in provider['resources']]))
