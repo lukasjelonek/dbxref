@@ -35,8 +35,13 @@ def load_with_external_provider(provider, dbxrefs):
 def load_with_internal_provider(provider, dbxrefs):
     import importlib
     retrieve_method = getattr(importlib.import_module(provider['retriever']['location']), 'retrieve')
-    retrieved = retrieve_method(dbxrefs)
-    return retrieved
+    try:
+      retrieved = retrieve_method(dbxrefs)
+      return retrieved
+    except:
+      logger.warning('{0} could not be retrieved due to errors.'.format(dbxrefs))
+      raise
+
 
 def toString(dbxref):
     return '{}:{}'.format(dbxref['db'], dbxref['id'])
