@@ -63,14 +63,15 @@ def read_annotation(entry):
             'comment': entry.find('pfam:comment', ns).text.strip()
             }
     go_terms = entry.find('pfam:go_terms', ns)
-    categories = go_terms.findall('pfam:category', ns)
-    for category in categories:
-        terms = category.findall('pfam:term', ns)
-        for term in terms:
-            annotation['terms'].append({
-                'id': term.attrib['go_id'],
-                'description': term.text
-                })
+    if go_terms:
+      categories = go_terms.findall('pfam:category', ns)
+      for category in categories:
+          terms = category.findall('pfam:term', ns)
+          for term in terms:
+              annotation['terms'].append({
+                  'id': term.attrib['go_id'],
+                  'description': term.text
+                  })
     return annotation
 
 if __name__ == "__main__":
