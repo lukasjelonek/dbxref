@@ -58,8 +58,10 @@ def retrieve(dbxrefs, basic=True, sequence=True, organism=True, annotation=True,
                     output.update(read_annotation(child))
                 if features:
                     output['features'] = read_features(child)
+        except KeyError:
+            logger.warn('Error in retrieving %s', str(entry))
+            raise
         except RuntimeError as e:
-            print(e.message)
             output['message'] = 'an error occurred'
             try:
                 html = HTML.document_fromstring(r.text.replace('\n', ' '))
@@ -166,8 +168,17 @@ def read_features(entry):
         if f.find('uniprot:location', ns).find('uniprot:position', ns) is not None:
             feature['position'] = f.find('uniprot:location', ns).find('uniprot:position', ns).attrib['position']
         else:
-            feature['begin'] = f.find('uniprot:location', ns).find('uniprot:begin', ns).attrib['position']
-            feature['end'] = f.find('uniprot:location', ns).find('uniprot:end', ns).attrib['position']
+            begin = f.find('uniprot:location', ns).find('uniprot:begin', ns)
+            if 'position' in begin.attrib:
+                feature['begin'] = begin.attrib['position']
+            else:
+                feature['begin'] = begin.attrib['status']
+
+            end = f.find('uniprot:location', ns).find('uniprot:end', ns)
+            if 'position' in end.attrib:
+                feature['end'] = end.attrib['position']
+            else:
+                feature['end'] = end.attrib['status']
         features.append (feature)
     return features
 
