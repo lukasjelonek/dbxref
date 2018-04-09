@@ -71,9 +71,13 @@ def read_annotation(entry):
     annotation = {
             'domain': entry.attrib['id'],
             'accession': entry.attrib['accession'],
-            'terms' : [],
-            'comment': entry.find('pfam:comment', ns).text.strip()
+            'terms' : []
             }
+
+    comment = entry.find('pfam:comment', ns)
+    if comment:
+      annotation['comment'] = comment.text.strip()
+
     go_terms = entry.find('pfam:go_terms', ns)
     if go_terms:
       categories = go_terms.findall('pfam:category', ns)
