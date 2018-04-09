@@ -58,7 +58,7 @@ def retrieve(dbxrefs, basic=True, sequence=True, organism=True, annotation=True,
                     output.update(read_annotation(child))
                 if features:
                     output['features'] = read_features(child)
-        except KeyError:
+        except (KeyError, AttributeError) as e:
             logger.warn('Error in retrieving %s', str(entry))
             raise
         except RuntimeError as e:
