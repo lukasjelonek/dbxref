@@ -39,15 +39,27 @@ def retrieve(dbxrefs, basic=True, annotation=True):
 
         output = {'id': entry['dbxref']}
 
-        tree = str(ET.tostring(root))
-        if '<error>' in tree:
-             output['message'] = tree[tree.find('<error>')+7:tree.rfind('</error>')]
-        else:
-            for child in root.findall('pfam:entry', ns):
-                if basic:
-                    output.update(read_basic(child))
-                if annotation:
-                    output.update(read_annotation(child))
+        try:
+          tree = str(ET.tostring(root))
+          if '<error>' in tree:
+               output['message'] = tree[tree.find('<error>')+7:tree.rfind('</error>')]
+          else:
+              for child in root.findall('pfam:entry', ns):
+                  if basic:
+                      output.update(read_basic(child))
+                  if annotation:
+                      output.update(read_annotation(child))
+        except (KeyError, AttributeError) as e:
+            logger.warn('Error in retrieving %s', str(entry))
+            raise
+        except RuntimeError as e:
+            output['message'] = 'an error occurred'
+            try:
+                html = HTML.document_fromstring(r.text.replace('\n', ' '))
+                if html.get_element_by_id('noResultsMessage') is not None:
+                    output['message'] = 'no results found; probably invalid ID'
+            except:
+                pass
         documents.append(output)
     return documents
 
