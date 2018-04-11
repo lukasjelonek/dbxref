@@ -68,6 +68,7 @@ def retrieve(dbxrefs, basic=True, sequence=True, organism=True, annotation=True,
                 pass
         except:
             logger.warn('Error in retrieving %s', str(entry))
+            logger.warn('Document:\n%s', r.text)
             raise
         documents.append(output)
     return documents
