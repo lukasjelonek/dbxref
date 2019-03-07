@@ -58,7 +58,7 @@ def retrieve(dbxrefs, basic=True, sequence=True, organism=True, annotation=True,
                     output.update(read_annotation(child))
                 if features:
                     output['features'] = read_features(child)
-        except RuntimeError as e:
+        except (RuntimeError, ET.ParseError) as e:
             output['message'] = 'an error occurred'
             try:
                 html = HTML.document_fromstring(r.text.replace('\n', ' '))
