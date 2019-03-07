@@ -10,7 +10,7 @@
 - name: Gene Identifier
   prefixes: ["GI"]
   resources:
-      html: ["http://www.ncbi.nlm.nih.gov/protein/GI:%i"]
+      html: ["https://www.ncbi.nlm.nih.gov/protein/GI:%i"]
       xml: ["http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=protein&dopt=xml&sort=&val=%i&retmode=file"]
   # does not work
   # check_existence: "http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=protein&dopt=xml&sort=&val=%i&retmode=file"
