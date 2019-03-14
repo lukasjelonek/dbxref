@@ -9,7 +9,7 @@ def _load_providers(path):
     import yaml
     data = []
     with open(path) as data_file:
-        data = yaml.load(data_file)
+        data = yaml.load(data_file, loader=yaml.Loader)
     return data
 
 def load_indexed_providers():
