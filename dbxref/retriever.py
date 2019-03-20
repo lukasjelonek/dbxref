@@ -12,15 +12,19 @@ def retrieve(dbxrefs):
         if config.has_provider(key):
             provider = config.get_provider(key)
             logger.debug('{0} is supported'.format(key))
-            if provider['retriever']['type'] == 'external':
-                results.extend( load_with_external_provider(provider, list(dbxrefs)))
-            elif provider['retriever']['type'] == 'internal':
-                results.extend(load_with_internal_provider(provider, list(dbxrefs)))
+            if 'retriever' in provider:
+              if provider['retriever']['type'] == 'external':
+                  results.extend( load_with_external_provider(provider, list(dbxrefs)))
+              elif provider['retriever']['type'] == 'internal':
+                  results.extend(load_with_internal_provider(provider, list(dbxrefs)))
+              else:
+                  raise Exception('Unknown retriever type', provider['retriever']['type'])
             else:
-                raise Exception('Unknown retriever type', provider['retriever']['type'])
+              logger.debug('Retrieval of {0} is not supported'.format(key))
+              results.extend( map(lambda x: {'id': toString(x), 'status': 'retrieval not supported'}, dbxrefs))
         else:
-            logger.debug('{0} is not supported'.format(key))
-            results.extend( map(lambda x: {'id': toString(x), 'status': 'not supported'}, dbxrefs))
+            logger.debug('Retrieval of {0} is not supported'.format(key))
+            results.extend( map(lambda x: {'id': toString(x), 'status': 'retrieval not supported'}, dbxrefs))
     return (results)
 
 def load_with_external_provider(provider, dbxrefs):
