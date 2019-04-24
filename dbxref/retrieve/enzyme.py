@@ -45,14 +45,14 @@ def retrieve(dbxrefs, basic=True, references=True):
       html = HTML.document_fromstring(ls).head.text_content()
       # when everything is fine an exception was thrown for
       # the last line
-      output = {'dbxref': entry['dbxref']}
+      output = {'id': entry['dbxref']}
       output['message'] = html
       if output['message'] == ' 500 Internal Server Error ':
         output['message'] = '500 Internal Server Error; probably invalid ID'
       documents.append(output)
     except:
       retrieved_entry = parse_flat_file(r.text)
-      retrieved_entry['dbxref'] = entry['dbxref']
+      retrieved_entry['id'] = entry['dbxref']
       documents.append(retrieved_entry)
   return documents
 
