@@ -4,3 +4,5 @@ pyyaml
 lockfile
 lxml
 pbr
+diskcache
+appdirs
