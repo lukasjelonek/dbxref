@@ -89,8 +89,8 @@
 - name: Gene Ontology
   prefixes: ["GO"]
   resources:
-      html: ["http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i"]
-      xml: ["http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i&format=oboxml"]
+      html: ["https://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i"]
+      xml: ["https://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i&format=oboxml"]
       json: ["https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/GO:%i/complete"]
   check_existence: "http://purl.obolibrary.org/obo/GO_%i"
   retriever:
