@@ -73,7 +73,7 @@ def cache_entries(cache, entries):
   expiration_time = 86400 # one day
   for e in entries:
     logger.debug('Caching {}'.format(e['id']))
-    cache.set(e['id'], e, expire=30)
+    cache.set(e['id'], e, expire=expiration_time)
 
 def find_cached_entries(cache, dbxrefs):
   cached = []
