@@ -47,6 +47,8 @@ def retrieve(dbxrefs, basic=True, relations=False):
 def read_basic(d):
     out = {'definition': d['results'][0]['definition']['text'], 'synonyms': []}
     out['name'] = d['results'][0]['name']
+    if 'aspect' in d['results'][0]:
+      out['aspect'] = d['results'][0]['aspect']
     if 'synonyms' in d['results'][0]:
       out['synonyms'] = d['results'][0]['synonyms']
     return (out)
