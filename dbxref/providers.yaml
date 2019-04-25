@@ -26,6 +26,10 @@
       xml: ["http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=protein&dopt=xml&sort=&val=%i&retmode=file"]
   # does not work
   # check_existence: "http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=protein&dopt=xml&sort=&val=%i&retmode=file"
+- name: Conserved domain database
+  prefixes: ["CDD"]
+  resources:
+      html: ["https://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=%i"]
 - name: Uniprot
   prefixes: ["UniProtKB/TrEMBL", "UniProtKB/Swiss-Prot"]
   resources:
