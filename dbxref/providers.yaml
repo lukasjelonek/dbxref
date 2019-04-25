@@ -13,6 +13,12 @@
       html: ["https://hamap.expasy.org/signature/%i"]
       text: ["https://hamap.expasy.org/signature/%i.txt"]
   check_existence: "https://hamap.expasy.org/signature/%i.txt"
+- name: OMA - Orthologous MAtrix
+  prefixes: ["OMA"]
+  resources:
+      html: ["https://omabrowser.org/oma/omagroup/%i/"]
+      json: ["https://omabrowser.org/api/group/%i/"]
+  check_existence: "https://omabrowser.org/api/group/%i/"
 - name: Gene Identifier
   prefixes: ["GI"]
   resources:
