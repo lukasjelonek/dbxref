@@ -127,4 +127,7 @@
   resources:
       html: ["%d:%i"]
   check_existence: "%d:%i"
-
+- name: EggNOG
+  prefixes: ['eggnog']
+  resources:
+    html: ["http://eggnogdb.embl.de/#/app/results?target_nogs=%i"]
