@@ -24,11 +24,18 @@ before_script:
   - virtualenv venv
   - source venv/bin/activate
 
+stages:
+  - test
+  - bundle
+  - deploy
+
 test:
+  stage: test
   script:
   - python setup.py test
 
 run:
+  stage: bundle
   script:
   - python setup.py bdist_wheel
   # an alternative approach is to install and run:
@@ -39,6 +46,7 @@ run:
     - dist/*.whl
 
 pages:
+  stage: deploy
   script:
   - pip install sphinx sphinx-rtd-theme
   - python setup.py build_sphinx
