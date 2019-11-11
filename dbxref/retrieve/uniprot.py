@@ -180,6 +180,9 @@ def read_features(entry):
                 feature['end'] = end.attrib['position']
             else:
                 feature['end'] = end.attrib['status']
+
+            feature['begin'] = int(feature['begin'])
+            feature['end'] = int(feature['end'])
         features.append (feature)
     return features
 
