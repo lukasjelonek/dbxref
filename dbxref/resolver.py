@@ -59,9 +59,9 @@ def compile_url(template, dbxref):
 
 def check_url_exists(url):
     try:
-        r = sess.head(url, allow_redirects=True, timeout=1)
+        r = sess.head(url, allow_redirects=True, timeout=5)
         r.close()
-        if r.status_code <= 400:
+        if r.status_code < 400:
             return STATUS_EXISTS
         else:
             logger.debug('The server responded with status code: %s', r.status_code)

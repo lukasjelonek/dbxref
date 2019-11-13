@@ -35,16 +35,23 @@ def retrieve(dbxrefs, basic=True, references=True):
     txt_url = entry['locations']['text'][0]
     logger.debug('URL: %s', txt_url)
     r = requests.get(txt_url)
-    retrieved_entry = {}
-    if r.status_code < 400:
+    logger.debug('Content: %s', r.text)
+    try:
+      # We expect a plain text document
+      # check if the document returned is a html document
+      # if it is something went from and we assume that
+      # it is a error page.
+      ls = r.text.replace('\n', ' ')
+      html = HTML.document_fromstring(ls).head.text_content()
+      # when everything is fine an exception was thrown for
+      # the last line
+      output = {'id': entry['dbxref']}
+      output['status'] = 'not found'
+      documents.append(output)
+    except:
       retrieved_entry = parse_flat_file(r.text)
-    elif r.status_code == 404:
-      retrieved_entry = {'status' : '404 Not found'}
-    else:
-      retrieved_entry = {'status' : r.status_code}
-    retrieved_entry['dbxref'] = entry['dbxref']
-    documents.append(retrieved_entry)
-
+      retrieved_entry['id'] = entry['dbxref']
+      documents.append(retrieved_entry)
   return documents
 
 

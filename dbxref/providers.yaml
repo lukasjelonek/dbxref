@@ -7,6 +7,18 @@
   retriever:
       type: 'internal'
       location: 'dbxref.retrieve.enzyme'
+- name: HAMAP
+  prefixes: ["HAMAP"]
+  resources:
+      html: ["https://hamap.expasy.org/signature/%i"]
+      text: ["https://hamap.expasy.org/signature/%i.txt"]
+  check_existence: "https://hamap.expasy.org/signature/%i.txt"
+- name: OMA - Orthologous MAtrix
+  prefixes: ["OMA"]
+  resources:
+      html: ["https://omabrowser.org/oma/omagroup/%i/"]
+      json: ["https://omabrowser.org/api/group/%i/"]
+  check_existence: "https://omabrowser.org/api/group/%i/"
 - name: Gene Identifier
   prefixes: ["GI"]
   resources:
@@ -14,6 +26,10 @@
       xml: ["http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=protein&dopt=xml&sort=&val=%i&retmode=file"]
   # does not work
   # check_existence: "http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=protein&dopt=xml&sort=&val=%i&retmode=file"
+- name: Conserved domain database
+  prefixes: ["CDD"]
+  resources:
+      html: ["https://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=%i"]
 - name: Uniprot
   prefixes: ["UniProtKB/TrEMBL", "UniProtKB/Swiss-Prot"]
   resources:
@@ -89,15 +105,29 @@
 - name: Gene Ontology
   prefixes: ["GO"]
   resources:
-      html: ["http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i"]
-      xml: ["http://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i&format=oboxml"]
+      html: ["https://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i"]
+      xml: ["https://www.ebi.ac.uk/QuickGO/GTerm?id=GO:%i&format=oboxml"]
       json: ["https://www.ebi.ac.uk/QuickGO/services/ontology/go/terms/GO:%i/complete"]
   check_existence: "http://purl.obolibrary.org/obo/GO_%i"
   retriever:
       type: 'internal'
       location: 'dbxref.retrieve.gene_ontology'
+- name: KEGG
+  prefixes: ["KO", "KEGG"]
+  resources:
+      html: ["https://www.genome.jp/dbget-bin/www_bget?%i"]
+      text: ["http://rest.kegg.jp/get/%i"]
+  check_existence: "http://rest.kegg.jsdjkaap/get/%i"
+  # not implemented yet
+  # retriever:
+  #    type: 'internal'
+  #    location: 'dbxref.retrieve.kegg'
 - name: HTTP
   prefixes: ["http", "https"]
   resources:
       html: ["%d:%i"]
   check_existence: "%d:%i"
+- name: EggNOG
+  prefixes: ['eggnog']
+  resources:
+    html: ["http://eggnogdb.embl.de/#/app/results?target_nogs=%i"]

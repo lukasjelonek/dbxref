@@ -180,6 +180,15 @@ def read_features(entry):
                 feature['end'] = end.attrib['position']
             else:
                 feature['end'] = end.attrib['status']
+
+            if feature['begin'] is not 'unknown':
+              feature['begin'] = None
+            else:
+              feature['begin'] = int(feature['begin'])
+            if feature['end'] is not 'unknown':
+              feature['end'] = None
+            else:
+              feature['end'] = int(feature['end'])
         features.append (feature)
     return features
 

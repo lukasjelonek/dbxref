@@ -2,6 +2,7 @@
 import dbxref.resolver
 import requests
 import xml.etree.ElementTree as ET
+from xml.etree.ElementTree import ParseError
 import logging
 import json
 import argparse
@@ -35,11 +36,12 @@ def retrieve(dbxrefs, basic=True, annotation=True):
         logger.debug('URL: %s', xml_url)
         r = requests.get(xml_url)
         logger.debug('Content: %s', r.text)
-        root = ET.fromstring(r.text)
 
         output = {'id': entry['dbxref']}
 
         try:
+          root = ET.fromstring(r.text)
+
           tree = str(ET.tostring(root))
           if '<error>' in tree:
                output['message'] = tree[tree.find('<error>')+7:tree.rfind('</error>')]
@@ -52,7 +54,7 @@ def retrieve(dbxrefs, basic=True, annotation=True):
         except (KeyError, AttributeError) as e:
             logger.warn('Error in retrieving %s', str(entry))
             raise
-        except RuntimeError as e:
+        except (ParseError, RuntimeError) as e:
             output['message'] = 'an error occurred'
             try:
                 html = HTML.document_fromstring(r.text.replace('\n', ' '))

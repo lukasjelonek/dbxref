@@ -34,21 +34,24 @@ def retrieve(dbxrefs, basic=True, relations=False):
     if 'messages' in d:
       output['message'] = '; '.join(d['messages'])
     else:
-      if basic:
-        output.update(read_basic(d))
-      if relations:
-        output.update(read_relations(d))
+      if len(d['results']) > 0:
+        if basic:
+          output.update(read_basic(d))
+        if relations:
+          output.update(read_relations(d))
+      else: 
+        output['message'] = "no results found, probably invalid ID"
     documents.append(output)
   return documents
 
 def read_basic(d):
-  out = {'definition': d['results'][0]['definition']['text'], 'synonyms': []}
-  out['name'] = d['results'][0]['name']
-  if 'aspect' in d['results'][0]:
-    out['aspect'] = d['results'][0]['aspect']
-  if 'synonyms' in d['results'][0]:
-    out['synonyms'] = d['results'][0]['synonyms']
-  return (out)
+    out = {'definition': d['results'][0]['definition']['text'], 'synonyms': []}
+    out['name'] = d['results'][0]['name']
+    if 'aspect' in d['results'][0]:
+      out['aspect'] = d['results'][0]['aspect']
+    if 'synonyms' in d['results'][0]:
+      out['synonyms'] = d['results'][0]['synonyms']
+    return (out)
 
 def read_relations(d):
   out = {'relations': {'children': [], 'parents': []}}
