@@ -77,4 +77,8 @@ def convert_string_to_dbxref(string):
     A dbxref is dictionary with two keys: db and id.
     """
     split = string.split(':', 1)
-    return {'db': split[0], 'id': split[1]}
+    if len(split) > 1:
+      return {'db': split[0], 'id': split[1]}
+    else:
+      # invalid dbxref. nevertheless return a valid dbxref object with the value as the db and a empty id.
+      return {'db': split[0], 'id': ''}
