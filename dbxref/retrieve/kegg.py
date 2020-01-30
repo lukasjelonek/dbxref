@@ -26,19 +26,24 @@ def main():
     parser.add_argument('dbxrefs', nargs=argparse.REMAINDER)
     args = parser.parse_args()
 
-    if None not in (args.basics, args.pathway, args.brite, args.dblinks, args.genes, args.reference):
+    if None not in (args.basics, args.pathway, args.brite, args.dblinks, args.genes, args.reference, args.orthology,
+                    args.motif, args.formula, args.reaction):
         args.basics = True
-        args.pathway = True
-        args.brite = True
-        args.dblinks = True
-        args.genes = True
-        args.reference = True
+        args.pathway = False
+        args.brite = False
+        args.dblinks = False
+        args.genes = False
+        args.reference = False
+        args.orthology = False
+        args.motif = False
+        args.formula = False
+        args.reaction = False
 
     dbxrefs = dbxref.resolver.convert_to_dbxrefs(args.dbxrefs)
 
     documents = retrieve(dbxrefs, basics=args.basics, pathway=args.pathway, brite=args.brite,
-                         dblinks=args.dblinks, genes=args.genes, reference=args.reference, reference=args.orthology,
-                         reference=args.motif, reference=args.formula, reference=args.reaction)
+                         dblinks=args.dblinks, genes=args.genes, reference=args.reference, orthology=args.orthology,
+                         motif=args.motif, formula=args.formula, reaction=args.reaction)
     print(json.dumps(documents))
 
 
@@ -57,7 +62,7 @@ def retrieve(dbxrefs, basics, pathway, brite, dblinks, genes, reference, ortholo
         glc = 0  # GlobalLineCounter
 
         for line in lines:
-            if "ENTRY" in line:  # should always be displayed
+            if "ENTRY" in line and basics:  # should always be displayed
                 output.update(read_basics(lines, glc))
             if "PATHWAY" in line and pathway:
                 output.update({"pathways": read_pathway(lines, glc)})
