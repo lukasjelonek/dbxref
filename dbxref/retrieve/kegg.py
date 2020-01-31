@@ -48,23 +48,23 @@ def main():
 
 
 def retrieve(dbxrefs, basics, pathway, brite, dbxrefs_links, genes, reference, orthology, motif, formula, reaction):
-    """parse kegg text file and return a list of the extracted information"""
+    """Parse kegg text file and return a list "documents" with the extracted information of the given entries. """
+
     resolved = dbxref.resolver.resolve(dbxrefs, check_existence=False)
     documents = []
-
     for entry in resolved:
         text_url = entry['locations']['text'][0]
         logger.debug('URL: %s', text_url)
         r = requests.get(text_url)
         logger.debug('Content: %s', r.text)
         lines = r.text.strip().split('\n')
-        output = {}
+        output = {}  # dictionary with terms as keys and the information of given term as values
 
         # Sorting the received list 'line' in a dictionary with the terms (f.e.: 'ENTRY', 'NAMES') as keys
         kegg_information = {}
         keyword = ""
         information = []
-        keyword_repeater = 0
+        keyword_repeater = 0  # counts multiples of keywords, important so that keywords dont get overwritten
         for line in lines:
             if line[:2].isspace():
                 information.append(line)
@@ -74,7 +74,7 @@ def retrieve(dbxrefs, basics, pathway, brite, dbxrefs_links, genes, reference, o
                 elif line[0:3].isupper():
                     if len(keyword) and len(information) != 0:
                         if keyword in kegg_information:  # prevents overwrite of Reference, Author, Journal, Title if multiple
-                            keyword = keyword.join("_" + keyword_repeater)
+                            keyword = keyword.join("_" + str(keyword_repeater))
                         else:
                             pass
                         kegg_information.update({keyword: information})
@@ -104,7 +104,6 @@ def retrieve(dbxrefs, basics, pathway, brite, dbxrefs_links, genes, reference, o
         if "PATHWAY" in kegg_information and pathway:
             output.update({"pathways": read_pathway(kegg_information["PATHWAY"])})
         if "GENES" in kegg_information and genes:
-            pass
             output.update({"genes": read_information(kegg_information["GENES"])})  # outcommented to lower the outprint
         if "ORTHOLOGY" in kegg_information and orthology:
             output.update({"ortholog genes": read_information(kegg_information["ORTHOLOGY"])})
@@ -128,6 +127,7 @@ def retrieve(dbxrefs, basics, pathway, brite, dbxrefs_links, genes, reference, o
 
 
 def read_entry(lines):
+    """Parse entry information (id, type and associated organism) as dictionaries"""
     information = read_information(lines)[0].split()
     entry_id = information[0]
     entry_type = information[1]
@@ -146,6 +146,7 @@ def read_pathway(lines):
 
 
 def read_reference(lines):
+    """Parse reference information(pmid, authors, title and journal as keys with corresponding value) as a dictionary"""
     reference_dictionary = {}
     reference_id = []
     authors = []
@@ -166,7 +167,10 @@ def read_reference(lines):
 
 
 def read_brite(lines):
-    """parse brite information as a tree"""
+    """Parse brite information as a list containing a list of vertices and a list of edges.
+     The combination of the two lists yields a directed, unweighted, acyclic and labeled Graph g=(v,e). The labels of
+     the vertices are included in the list of vertices ("vertices) and include the scientific name as well as an
+     assigned number (representing their number of addition to the list)."""
     tree = []
     vertices = []  # list of tuples of labels and count of vertices
     edges = []  # list of edges from roots to branches
@@ -195,6 +199,7 @@ def read_brite(lines):
 
 
 def read_dbxrefs(lines):
+    """Parse db_links and return a list of dbxrefs"""
     dbxref_id = []
     for line in lines:
         line = line.strip().split()
@@ -205,7 +210,7 @@ def read_dbxrefs(lines):
 
 
 def read_information(lines):
-    """parse given key-values information by deleting whitespace and joining the information into a list"""
+    """Parse given key-values information by deleting whitespace and joining the information into a list"""
     information = []
     for line in lines:
         information.append(" ".join(line.split()))
@@ -213,7 +218,7 @@ def read_information(lines):
 
 
 def get_depth(string):
-    """calculates amount of whitespaces, at the start of a string and returns int"""
+    """Calculates amount of whitespaces, at the start of a string and returns int"""
     spacecount = len(string) - len(string.lstrip(' '))
     return spacecount
 
