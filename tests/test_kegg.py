@@ -1,7 +1,7 @@
 import unittest
-from dbxref.retrieve import uniprot
+from dbxref.retrieve import kegg
 
 class TestKegg(unittest.TestCase):
 
     def test_parser_output(self):
-        documents = uniprot.retrieve([{"db": "KEGG", "id": "K00121"}])
+        documents = kegg.retrieve([{"db": "KEGG", "id": "K00121"}])
