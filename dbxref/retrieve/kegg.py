@@ -44,7 +44,7 @@ def main():
     documents = retrieve(dbxrefs, basics=args.basics, pathway=args.pathway, brite=args.brite, genes=args.genes,
                          reference=args.reference, orthology=args.orthology, motif=args.motif, formula=args.formula,
                          reaction=args.reaction, dbxrefs_links=args.dbxref_links)
-    # print(json.dumps(documents))
+    print(json.dumps(documents))
 
 
 def retrieve(dbxrefs, basics, pathway, brite, dbxrefs_links, genes, reference, orthology, motif, formula, reaction):
@@ -195,8 +195,13 @@ def read_brite(lines):
 
 
 def read_dbxrefs(lines):
+    dbxref_id = []
     for line in lines:
-        print(line)
+        line = line.strip().split()
+        for word in line[1:]:
+            dbxref_tuple = (line[0], word)
+            dbxref_id.append("".join(dbxref_tuple))
+    return dbxref_id
 
 
 def read_information(lines):
