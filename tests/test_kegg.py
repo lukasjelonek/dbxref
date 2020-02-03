@@ -10,7 +10,7 @@ class TestKegg(unittest.TestCase):
                                   orthology=True, reference=True)
 
     def test_brite_output_1(self):
-        # test
+        # Test parsing and saving of a graph(v,e) in an adjacency list. Tree with one root and one continuous branch
         brite_example_1 = [["BRITE       Root1"],
                            ["             branch1"],
                            ["              branch2"],
@@ -29,7 +29,7 @@ class TestKegg(unittest.TestCase):
                                   }
         self.assertEqual(kegg.read_brite(brite_example_1), brite_example_output_1)
 
-        # test
+        # Test parsing and saving of a graph(v,e) in an adjacency list. Tree with one root but two branches.
         brite_example_2 = [["BRITE       Root1"],
                            ["             branch1"],
                            ["              branch2"],
@@ -48,15 +48,15 @@ class TestKegg(unittest.TestCase):
                                   }
         self.assertEqual(kegg.read_brite(brite_example_2), brite_example_output_2)
 
-        # test
+        # Test parsing and saving of a graph(v,e) in an adjacency list. Tree with a second root and separate branches
         brite_example_3 = [["BRITE       Root1"],
                            ["             branch1"],
                            ["              branch2"],
-                           ["            Branch3"],
+                           ["            Root2"],
                            ["             BRANCH4"],
                            ["              branch5"]
                            ]
-        brite_example_output_3 = {"vertices": ["Root1", "branch1", "branch2", "Branch3", "BRANCH4", "branch5"],
+        brite_example_output_3 = {"vertices": ["Root1", "branch1", "branch2", "Root2", "BRANCH4", "branch5"],
                                   "edges": {"0": ["1"],
                                             "1": ["2"],
                                             "2": [],
@@ -67,7 +67,7 @@ class TestKegg(unittest.TestCase):
                                   }
         self.assertEqual(kegg.read_brite(brite_example_3), brite_example_output_3)
 
-        # test
+        # Test parsing and saving of a graph(v,e) in an adjacency list. Tree with one root and branch, bu multiple leafs
         brite_example_4 = [["BRITE       Root1"],
                            ["             branch1"],
                            ["              branch2"],
@@ -86,7 +86,7 @@ class TestKegg(unittest.TestCase):
                                   }
         self.assertEqual(kegg.read_brite(brite_example_4), brite_example_output_4)
 
-        # test
+        # Test parsing and saving of a graph(v,e) in an adjacency list. Tree with a mix of above testing methods
         brite_example_5 = [["BRITE       Root1"],
                            ["             branch1"],
                            ["              branch2"],
