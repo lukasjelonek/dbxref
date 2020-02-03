@@ -60,26 +60,6 @@ def retrieve(dbxrefs, basics, pathway, brite, dbxrefs_links, genes, reference, o
         logger.debug('Content: %s', r.text)
         lines = r.text.strip().split('\n')
         output = {}  # dictionary with terms as keys and the information of given term as values
-
-        # kegginfo = {
-        #   'REFERENCE' : [
-        #     [
-        #       'REFERENCE   PMID:11939774',
-        #       'AUTHORS   Cheong CG, Bauer CB, Brushaber KR, Escalante-Semerena JC, Rayment I',
-        #       'TITLE     Three-dimensional structure of the L-threonine-O-3-phosphate decarboxylase (CobD) enzyme from Salmonella enterica.',
-        #       'JOURNAL   Biochemistry 41:4798-808 (2002)',
-        #       'DOI:10.1021/bi012111w'
-        #      ],
-        #      [
-        #        'REFERENCE   PMID:11939774',
-        #         #       'AUTHORS   Cheong CG, Bauer CB, Brushaber KR, Escalante-Semerena JC, Rayment I',
-        #         #       'TITLE     Three-dimensional structure of the L-threonine-O-3-phosphate decarboxylase (CobD) enzyme from Salmonella enterica.',
-        #         #       'JOURNAL   Biochemistry 41:4798-808 (2002)',
-        #         #       'DOI:10.1021/bi012111w'
-        #      ]
-        #    ]
-        # }
-
         # Sorting the received list 'line' in a dictionary with the terms (f.e.: 'ENTRY', 'NAMES') as keys
         kegg_information = parse_entry(lines)
         # Search dictionary for existence of keywords requested by user.
@@ -150,6 +130,38 @@ def retrieve(dbxrefs, basics, pathway, brite, dbxrefs_links, genes, reference, o
 
 
 def parse_entry(lines):
+    """Parses the entire entry document (text) and returns a dictionary containing the left indented titles as keys with
+    the corresponding lines in a list of strings as values. "kegg_information" contains the entire information of the
+    given text document, no information is dismissed, even when it might not be used later (f.e. it was not requested).
+    """
+    # expected input (example):
+    # ENTRY       K00768                      KO
+    # NAME        E2.4.2.21, cobU, cobT
+    # DEFINITION  nicotinate-nucleotide--dimethylbenzimidazole phosphoribosyltransferase [EC:2.4.2.21]
+    # PATHWAY     ko00860  Porphyrin and chlorophyll metabolism
+    #             ko01100  Metabolic pathways
+    # MODULE      M00122  Cobalamin biosynthesis, cobinamide => cobalamin
+    # BRITE       KEGG Orthology (KO) [BR:ko00001]
+    #              09100 Metabolism
+    #               09108 Metabolism of cofactors and vitamins
+    #                00860 Porphyrin and chlorophyll metabolism
+    #                 K00768  E2.4.2.21, cobU, cobT; nicotinate-nucleotide--dimethylbenzimidazole phosphoribosyltransferase
+    #
+    # expected output (example):
+    # kegg_information = {
+    #                       'ENTRY': ['ENTRY       K00768                      KO']
+    #                       'NAME': ['NAME        E2.4.2.21, cobU, cobT']
+    #                       'DEFINITION': [DEFINITION  nicotinate-nucleotide--dimethylbenzimidazole phosphoribosyltransferase [EC:2.4.2.21]]
+    #                       'PATHWAY': ['PATHWAY     ko00860  Porphyrin and chlorophyll metabolism',
+    #                                   '            ko01100  Metabolic pathways']
+    #                       'MODULE': ['MODULE      M00122  Cobalamin biosynthesis, cobinamide => cobalamin']
+    #                       'BRITE': ['BRITE       KEGG Orthology (KO) [BR:ko00001',
+    #                                 '             09100 Metabolism',
+    #                                 '              09108 Metabolism of cofactors and vitamins',
+    #                                 '               00860 Porphyrin and chlorophyll metabolism',
+    #                                 '                K00768  E2.4.2.21, cobU, cobT; nicotinate-nucleotide--dimethylbenzimidazole phosphoribosyltransferase']
+    #                     }
+
     kegg_information = {}
     keyword = ""
     information = []
@@ -178,6 +190,16 @@ def parse_entry(lines):
 
 def read_id(entry):
     """Parse entry information (id, type and associated organism) as dictionaries"""
+    # expected input (example):
+    # kegg_information['ENTRY']: [
+    #                               'ENTRY       10458             CDS       T01001'
+    #                             ]
+    #
+    # expected output (example):
+    # entry_id = ['10458']
+    # entry_type = ['CDS']
+    # associated_organism = "T01001"
+
     information = read_information(entry)[0].split()
     entry_id = information[1]
     entry_type = information[2]
@@ -192,21 +214,44 @@ def read_id(entry):
 def read_reference(entry):
     """Parse reference information(pmid, authors, title and journal as keys with corresponding value) as a dictionary"""
     # expected input (example):
-    #  [
-    #       'REFERENCE   PMID:11939774',
-    #       'AUTHORS   Cheong CG, Bauer CB, Brushaber KR, Escalante-Semerena JC, Rayment I',
-    #       'TITLE     Three-dimensional structure of the L-threonine-O-3-phosphate decarboxylase (CobD) enzyme from Salmonella enterica.',
-    #       'JOURNAL   Biochemistry 41:4798-808 (2002)',
-    #       'DOI:10.1021/bi012111w'
-    #      ],
+    # kegg_information['REFERENCE']:
+    #                               [
+    #                               'REFERENCE   PMID:11939774'
+    #                               'AUTHORS   Cheong CG, Bauer CB, Brushaber KR, Escalante-Semerena JC, Rayment I'
+    #                               'TITLE     Three-dimensional structure of the L-threonine-O-3-phosphate
+    #                               decarboxylase (CobD) enzyme from Salmonella enterica.'
+    #                               'JOURNAL   Biochemistry 41:4798-808 (2002)'
+    #                               'DOI:10.1021/bi012111w'
+    #                               ],
+    #                               [
+    #                               'REFERENCE   PMID:11939774',
+    #                               'AUTHORS   Cheong CG, Bauer CB, Brushaber KR, Escalante-Semerena JC, Rayment I'
+    #                               'TITLE     Three-dimensional structure of the L-threonine-O-3-phosphate
+    #                               decarboxylase (CobD) enzyme from Salmonella enterica.'
+    #                               'JOURNAL   Biochemistry 41:4798-808 (2002)'
+    #                               'DOI:10.1021/bi012111w'
+    #                               ]
+    #
+    # expected output (example):
+    # reference output = [
+    #                       {
+    #                       'dbxref': 'PMID:11939774',
+    #                       'authors': ['Cheong CG', 'Bauer CB', 'Brushaber KR', 'Escalante-Semerena JC', 'Rayment I']
+    #                       'title': 'Three-dimensional structure of the L-threonine-O-3-phosphate decarboxylase (CobD)
+    #                                 enzyme from Salmonella enterica.'
+    #                       'journal': 'Biochemistry 41:4798-808 (2002)'
+    #                       'DOI': '10.1021/bi012111w'
+    #                        },
+    #                       {
+    #                       'dbxref': 'PMID:11939774',
+    #                       'authors': ['Cheong CG', 'Bauer CB', 'Brushaber KR', 'Escalante-Semerena JC', 'Rayment I']
+    #                       'title': 'Three-dimensional structure of the L-threonine-O-3-phosphate decarboxylase (CobD)
+    #                                 enzyme from Salmonella enterica.'
+    #                       'journal': 'Biochemistry 41:4798-808 (2002)'
+    #                       'DOI': '10.1021/bi012111w'
+    #                        }
+    #                    ]
 
-    # output:
-    # [
-    #   {
-    #     'title': '..',
-
-    #   }
-    # ]
     reference_output = []
     for lines in entry:
         next_reference = {"dbxref": "", "authors": "", "title": "", "journal": "",
@@ -226,64 +271,65 @@ def read_reference(entry):
     return reference_output
 
 
-def test(entry):
-    """Parse brite information as an adjacency dictionary containing a list of vertices and a list of edges.
-     The combination of the two lists yields a directed, unweighted, acyclic and labeled Graph g=(v,e). The labels of
-     the vertices are included in the list of vertices ("vertices) and include the scientific name"""
-    tree = {}
-    vertices = []  # list of tuples of labels and count of vertices
-    edges = {}  # list of edges from roots to branches
-    vertices_counter = 0
-    stack = []
-    for lines in entry:
-        for line in lines:
-            depth = get_depth(line)-12
-            if depth <= 0:
-                stack = [(" ".join(line.split()), vertices_counter)]
-            else:  # line is a branch
-                new_branch = (" ".join(line.split()), vertices_counter)
-                if depth <= len(stack):  # line is a branch not from the line above, stack is emptied until depth fits
-                    stack = stack[:depth]
-                else:  # line is a new branch of the branch above
-                    pass
-                stack.append(new_branch)
-            vertices.append(stack[-1][0])  # append name of v. only, v-counter unnecessary because equals position
-            if len(stack) == 1:  # only root in stack
-                pass
-            else:  # more than root in stack
-                edges[stack[-2]][1].append(stack[-1][1])
-            vertices_counter += 1
-        tree.update({"vertices": vertices})
-        tree.update({"edges": edges})
-    return tree
-
-
 def read_brite(entry):
+    """Parse brite information as an adjacency dictionary containing a list of vertices and a list of edges.
+    The combination of the two lists yields a directed, unweighted, acyclic and labeled Graph g=(v,e). The labels of
+    the vertices are included in the list of vertices ("vertices) and include the scientific name"""
+    # expected input (example):
+    # kegg_information["BRITE"] = [
+    #                               ["BRITE       KEGG Orthology (KO) [BR:hsa00001]"],
+    #                               ["             09140 Cellular Processes"],
+    #                               ["              09144 Cellular community - eukaryotes"],
+    #                               ["               04520 Adherens junction"],
+    #                               ["                10458 (BAIAP2)"],
+    #                               ["              09142 Cell motility"]
+    #                               ["               04810 Regulation of actin cytoskeleton"]
+    #                               ["                10458 (BAIAP2)"]
+    #                              ]
+    #
+    # expected output (example):
+    # tree = {"vertices": ["KEGG Orthology (KO) [BR:hsa00001]", "09140 Cellular Processes",
+    #                                       "09144 Cellular community - eukaryotes", "04520 Adherens junction",
+    #                                       "04520 Adherens junction", "10458 (BAIAP2)", "09142 Cell motility",
+    #                                       "04810 Regulation of actin cytoskeleton", "10458 (BAIAP2)"],
+    #         "edges": {"0": ["1"],
+    #                   "1": ["2", "5"],
+    #                   "2": ["3"],
+    #                   "3": ["4"],
+    #                   "4": ["],
+    #                   "5": ["6"]
+    #                   "6": ["7"]
+    #                   "7": []
+    #                   }
+    #        }
+
     tree = {}
-    # create list of vertices
+    # create list of vertices containing the labels of the graph
     vertices = []
     for lines in entry:
         for line in lines:
             vertices.append(" ".join(line.replace("BRITE", "").split()))
 
-    # create list of edges
-    stack = []
+    # create a dictionary 'edges' containing a key for every label in 'vertices' with an empty list[] as value that
+    # gets filled in the following progress
     edges = {str(i): [] for i, _ in enumerate(vertices)}
+    stack = []  # create a list that will be used as a stack (first in, last out)
     for lines in entry:
         for line in lines:
-            depth = get_depth(line)-12
-            if depth <= 0:
-                stack = [(" ".join(line.replace("BRITE", "").split()), len(stack))]
-            else:
-                new_branch = (" ".join(line.split()), len(stack))
-                if depth <= len(stack):  # line is a branch not from the line above, stack is emptied until depth fits
-                    stack = stack[:depth]
+            depth = get_depth(line)-12  # save amount of whitespace as depth, depth 0 means 12 whitespaces in front
+            if depth <= 0:  # new root
+                stack = [(" ".join(line.replace("BRITE", "").split()), len(stack))]  # empty entire stack, set new root
+            else:  # not a root = is a branch
+                new_branch = (" ".join(line.split()), len(stack))  # save branch with label and depth
+                if depth <= len(stack):  # line is a branch not from the line above
+                    stack = stack[:depth]  # stack is emptied until depth > len(stack)
                 else:  # line is a new branch of the branch above
                     pass
                 stack.append(new_branch)
             if len(stack) == 1:  # only root in stack
                 pass
             else:  # more than root in stack
+                # new adjacency is saved in 'edges' under the corresponding key that has the connection to a new branch
                 edges[str(vertices.index(stack[-2][0]))].append(str(vertices.index(stack[-1][0])))
     tree.update({"vertices": vertices})
     tree.update({"edges": edges})
@@ -292,6 +338,22 @@ def read_brite(entry):
 
 def read_dbxrefs(entry):
     """Parse db_links and return a list of dbxrefs"""
+    # expected input (example):
+    # kegg_information["DBLINKS"] = [
+    #                                'DBLINKS     PubChem: 4509',
+    #                                'ChEBI: 17950',
+    #                                'LIPIDMAPS: LMSP0501AB00',
+    #                                'LipidBank: GSG1147'
+    #                                ]
+    #
+    # expected output (example):
+    # dbxref_id = [
+    #              'PubChem:4509',
+    #              'ChEBI:17950',
+    #              'LIPIDMAPS:LMSP0501AB00',
+    #              'LipidBank:GSG1147'
+    #              ]
+
     dbxref_id = []
     for lines in entry:
         for line in lines:
@@ -309,6 +371,17 @@ def read_dbxrefs(entry):
 
 def read_information(entry):
     """Parse given key-values information by deleting whitespace and joining the information into a list"""
+    # expected input (example):
+    # kegg_information[""]: [
+    #                        'PATHWAY     ko00860  Porphyrin and chlorophyll metabolism'
+    #                        '            ko01100  Metabolic pathways'
+    #                        ]
+    #
+    # expected output (example):
+    # information = ['ko00860  Porphyrin and chlorophyll metabolism',
+    #                'ko01100  Metabolic pathways'
+    #                ]
+
     information = []
     for lines in entry:
         for line in lines:
@@ -320,9 +393,15 @@ def read_information(entry):
 
 
 def get_depth(string):
-    """Calculates amount of whitespaces, at the start of a string and returns int"""
-    spacecount = len(string) - len(string.lstrip(' '))
-    return spacecount
+    """Calculates amount of whitespaces leading the given string and returns int"""
+    # expected input (example):
+    # string = ['             09140 Cellular Processes']
+    #
+    # expected output (example):
+    # depth = 13
+
+    depth = len(string) - len(string.lstrip(' '))
+    return depth
 
 
 if __name__ == "__main__":
