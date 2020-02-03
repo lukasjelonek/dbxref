@@ -9,6 +9,7 @@ import argparse
 logger = logging.getLogger(__name__)
 NO_INFO = "NULL"
 
+
 def main():
     """main()method for script usage"""
     parser = argparse.ArgumentParser(description="Retrieve Kegg text documents and convert them into json")
