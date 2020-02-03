@@ -59,26 +59,6 @@ def retrieve(dbxrefs, basics, pathway, brite, dbxrefs_links, genes, reference, o
         logger.debug('Content: %s', r.text)
         lines = r.text.strip().split('\n')
         output = {}  # dictionary with terms as keys and the information of given term as values
-
-        # kegginfo = {
-        #   'REFERENCE' : [
-        #     [
-        #       'REFERENCE   PMID:11939774',
-        #       'AUTHORS   Cheong CG, Bauer CB, Brushaber KR, Escalante-Semerena JC, Rayment I',
-        #       'TITLE     Three-dimensional structure of the L-threonine-O-3-phosphate decarboxylase (CobD) enzyme from Salmonella enterica.',
-        #       'JOURNAL   Biochemistry 41:4798-808 (2002)',
-        #       'DOI:10.1021/bi012111w'
-        #      ],
-        #      [
-        #        'REFERENCE   PMID:11939774',
-        #         #       'AUTHORS   Cheong CG, Bauer CB, Brushaber KR, Escalante-Semerena JC, Rayment I',
-        #         #       'TITLE     Three-dimensional structure of the L-threonine-O-3-phosphate decarboxylase (CobD) enzyme from Salmonella enterica.',
-        #         #       'JOURNAL   Biochemistry 41:4798-808 (2002)',
-        #         #       'DOI:10.1021/bi012111w'
-        #      ]
-        #    ]
-        # }
-
         # Sorting the received list 'line' in a dictionary with the terms (f.e.: 'ENTRY', 'NAMES') as keys
         kegg_information = parse_entry(lines)
         # Search dictionary for existence of keywords requested by user.
@@ -125,6 +105,9 @@ def retrieve(dbxrefs, basics, pathway, brite, dbxrefs_links, genes, reference, o
 
 
 def parse_entry(lines):
+    """Parses the entire entry document (text) and yields a dictionary "kegg_information" with keywords as keys for the
+    corresponding lines as values. "kegg_information" includes the entire entry document, even when some information
+    might be dismissed later (f.e. if it was not requested)."""
     kegg_information = {}
     keyword = ""
     information = []
@@ -152,7 +135,7 @@ def parse_entry(lines):
 
 
 def read_id(entry):
-    """Parse entry information (id, type and associated organism) as dictionaries"""
+    """Parse basic informations (id, type and associated organism) as dictionaries"""
     information = read_information(entry)[0].split()
     entry_id = information[1]
     entry_type = information[2]
@@ -166,22 +149,45 @@ def read_id(entry):
 
 def read_reference(entry):
     """Parse reference information(pmid, authors, title and journal as keys with corresponding value) as a dictionary"""
-    # expected input (example):
-    #  [
-    #       'REFERENCE   PMID:11939774',
-    #       'AUTHORS   Cheong CG, Bauer CB, Brushaber KR, Escalante-Semerena JC, Rayment I',
-    #       'TITLE     Three-dimensional structure of the L-threonine-O-3-phosphate decarboxylase (CobD) enzyme from Salmonella enterica.',
-    #       'JOURNAL   Biochemistry 41:4798-808 (2002)',
-    #       'DOI:10.1021/bi012111w'
-    #      ],
+    # EXPECTED INPUT example:
+    # kegg_information = {
+    #                      'REFERENCE' : [
+    #                                       [
+    #                                       'REFERENCE   PMID:11939774',
+    #                                       'AUTHORS   Cheong CG, Bauer CB, Brushaber KR, Escalante-Semerena JC,
+    #                                       Rayment I',
+    #                                       'TITLE     Three-dimensional structure of the L-threonine-O-3-phosphate
+    #                                       decarboxylase (CobD) enzyme from Salmonella enterica.',
+    #                                       'JOURNAL   Biochemistry 41:4798-808 (2002)',
+    #                                       'DOI:10.1021/bi012111w'
+    #                                       ],
+    #                                       [
+    #                                       'REFERENCE   PMID:23555801',
+    #                                       'AUTHORS   Bernal-Quiros M, Wu YY, Alarcon-Riquelme ME, Castillejo-Lopez C',
+    #                                       'TITLE     BANK1 and BLK act through phospholipase C gamma 2 in B-cell
+    #                                       'signaling.',
+    #                                       'JOURNAL   PLoS One 8:e59842 (2013)',
+    #                                       'DOI:10.1371/journal.pone.0059842',
+    #                                       ]
+    #                                   ]
+    #                   }
+    #
+    # EXPECTED OUTPUT example:
+    # reference_dictionary = {
+    #                           'dbxref': 'PMID:11939774'
+    #                           'authors': ['Cheong CG', 'Bauer CB', 'Brushaber KR', 'Escalante-Semerena JC',
+    #                                       'Rayment I']
+    #                           'title': 'Three-dimensional structure of the L-threonine-O-3-phosphate decarboxylase
+    #                                     (CobD) enzyme from Salmonella enterica.'
+    #                           'journal': 'BANK1 and BLK act through phospholipase C gamma 2 in B-cell signaling.'
+    #                           'DOI': 'DOI:10.1021/bi012111w'
+    #
+    #
+    #
+    #
+    #
+    #
 
-    # output:
-    # [
-    #   {
-    #     'title': '..',
-
-    #   ]
-    # ]
     reference_dictionary = {}
     reference_id = []
     authors = []
