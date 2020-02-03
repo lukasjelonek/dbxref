@@ -45,7 +45,7 @@ def main():
     documents = retrieve(dbxrefs, basics=args.basics, pathway=args.pathway, brite=args.brite, genes=args.genes,
                          reference=args.reference, orthology=args.orthology, motif=args.motif, formula=args.formula,
                          reaction=args.reaction, dbxrefs_links=args.dbxref_links)
-    print(json.dumps(documents))
+    print(json.dumps(documents, sort_keys=True, indent=4))
 
 
 def retrieve(dbxrefs, basics, pathway, brite, dbxrefs_links, genes, reference, orthology, motif, formula, reaction):
