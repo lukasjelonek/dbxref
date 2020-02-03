@@ -7,10 +7,11 @@ import json
 import argparse
 
 logger = logging.getLogger(__name__)
+NO_INFO = "NULL"
 
 def main():
     """main()method for script usage"""
-    parser = argparse.ArgumentParser(description="Retrieve KEGG kgml documents and convert them into json")
+    parser = argparse.ArgumentParser(description="Retrieve Kegg text documents and convert them into json")
     parser.add_argument("--basics", "-b", action="store_true", help="Include ID/Entry, names/aliases and definition")
     parser.add_argument("--pathway", "-p", action="store_true", help="Include metabolic pathway")
     parser.add_argument("--brite", "-br", action="store_true", help="Include hierarchical classifications")
@@ -59,55 +60,96 @@ def retrieve(dbxrefs, basics, pathway, brite, dbxrefs_links, genes, reference, o
         logger.debug('Content: %s', r.text)
         lines = r.text.strip().split('\n')
         output = {}  # dictionary with terms as keys and the information of given term as values
+
+        # kegginfo = {
+        #   'REFERENCE' : [
+        #     [
+        #       'REFERENCE   PMID:11939774',
+        #       'AUTHORS   Cheong CG, Bauer CB, Brushaber KR, Escalante-Semerena JC, Rayment I',
+        #       'TITLE     Three-dimensional structure of the L-threonine-O-3-phosphate decarboxylase (CobD) enzyme from Salmonella enterica.',
+        #       'JOURNAL   Biochemistry 41:4798-808 (2002)',
+        #       'DOI:10.1021/bi012111w'
+        #      ],
+        #      [
+        #        'REFERENCE   PMID:11939774',
+        #         #       'AUTHORS   Cheong CG, Bauer CB, Brushaber KR, Escalante-Semerena JC, Rayment I',
+        #         #       'TITLE     Three-dimensional structure of the L-threonine-O-3-phosphate decarboxylase (CobD) enzyme from Salmonella enterica.',
+        #         #       'JOURNAL   Biochemistry 41:4798-808 (2002)',
+        #         #       'DOI:10.1021/bi012111w'
+        #      ]
+        #    ]
+        # }
+
         # Sorting the received list 'line' in a dictionary with the terms (f.e.: 'ENTRY', 'NAMES') as keys
         kegg_information = parse_entry(lines)
         # Search dictionary for existence of keywords requested by user.
         # If the keyword is present the data receiving function() is started and is put into the output file
         # Every keyword is a single search, to make the code more robust if keywords are missing
-        basic_informations = {}
-        reference_informations = []
-        if "ENTRY" in kegg_information and basics:
-            entry_information = read_id(kegg_information["ENTRY"])
-            basic_informations.update({"id": entry_information[0]})
-            basic_informations.update({"type": entry_information[1]})
-            if len(entry_information) > 3:
-                basic_informations.update({"associated organism": entry_information[2]})
-        if "NAME" in kegg_information and basics:
-            basic_informations.update({"names": read_information(kegg_information["NAME"])[0].split()})
-        if "DEFINITION" in kegg_information and basics:
-            basic_informations.update({"definition": read_information(kegg_information["DEFINITION"])[0]})
-        if "ORGANISM" in kegg_information and basics:
-            basic_informations.update({"organism": read_information(kegg_information["ORGANISM"])[0]})
-        output.update({"basics:": basic_informations})
-        if "PATHWAY" in kegg_information and pathway:
-            output.update({"pathways": read_information(kegg_information["PATHWAY"])})
-        if "GENES" in kegg_information and genes:
-            output.update({"genes": read_information(kegg_information["GENES"])})
-        if "ORTHOLOGY" in kegg_information and orthology:
-            output.update({"ortholog genes": read_information(kegg_information["ORTHOLOGY"])})
-        if "MOTIF" in kegg_information and motif:
-            output.update({"motif": read_information(kegg_information["MOTIF"])})
-        if "FORMULA" in kegg_information and formula:
-            output.update({"chemical formula": read_information(kegg_information["FORMULA"][0])})
-        if "REACTION" in kegg_information and reaction:
-            output.update({"reaction partners": read_information(kegg_information["REACTION"])})
-        if "BRITE" in kegg_information and brite:
-            output.update({"brite": read_brite(kegg_information["BRITE"])})
-        if "REFERENCE" in kegg_information and reference:
-            reference_informations.append(read_reference(kegg_information["REFERENCE"]))
-            output.update({"reference": reference_informations})
-        if "DBLINKS" in kegg_information and dbxrefs_links:
-            output.update({"dbxref_links": read_dbxrefs(kegg_information["DBLINKS"])})
-        else:
-            pass
+        if basics:
+            if "ENTRY" in kegg_information:
+                entry_information = read_id(kegg_information["ENTRY"])
+                output.update({"id": entry_information[0]})
+                output.update({"type": entry_information[1]})
+                if len(entry_information) > 3:
+                    output.update({"associated organism": entry_information[2]})
+            if "NAME" in kegg_information:
+                output.update({"names": read_information(kegg_information["NAME"])[0].replace(",", "").split()})
+            if "DEFINITION" in kegg_information:
+                output.update({"definition": read_information(kegg_information["DEFINITION"])[0]})
+            if "ORGANISM" in kegg_information:
+                output.update({"organism": read_information(kegg_information["ORGANISM"])[0]})
+            else:
+                print("Entry: " + NO_INFO)
+        if pathway:
+            if "PATHWAY" in kegg_information:
+                output.update({"pathways": read_information(kegg_information["PATHWAY"])})
+            else:
+                print("Pathway: " + NO_INFO)
+        if genes:
+            if "GENES" in kegg_information:
+                output.update({"genes": read_information(kegg_information["GENES"])})
+            else:
+                print("Genes: " + NO_INFO)
+        if orthology:
+            if "ORTHOLOGY" in kegg_information:
+                output.update({"ortholog genes": read_information(kegg_information["ORTHOLOGY"])})
+            else:
+                print("Orthology: " + NO_INFO)
+        if motif:
+            if "MOTIF" in kegg_information:
+                output.update({"motif": read_information(kegg_information["MOTIF"])})
+            else:
+                print("Motif: " + NO_INFO)
+        if formula:
+            if "FORMULA" in kegg_information:
+                output.update({"chemical formula": read_information(kegg_information["FORMULA"][0])})
+            else:
+                print("Formula: " + NO_INFO)
+        if reaction:
+            if "REACTION" in kegg_information:
+                output.update({"reaction partners": read_information(kegg_information["REACTION"])})
+            else:
+                print("Reaction: " + NO_INFO)
+        if brite:
+            if "BRITE" in kegg_information:
+                output.update({"brite": read_brite(kegg_information["BRITE"])})
+            else:
+                print("Brite: " + NO_INFO)
+        if reference:
+            if "REFERENCE" in kegg_information:
+                output.update({"reference": read_reference(kegg_information["REFERENCE"])})
+            else:
+                print("Reference: " + NO_INFO)
+        if dbxrefs_links:
+            if "DBLINKS" in kegg_information:
+                output.update({"dbxref_links": read_dbxrefs(kegg_information["DBLINKS"])})
+            else:
+                print("dbxref_links: " + NO_INFO)
         documents.append(output)
     return documents
 
 
 def parse_entry(lines):
-    """Parses the entire entry document (text) and yields a dictionary "kegg_information" with keywords as keys for the
-    corresponding lines as values. "kegg_information" includes the entire entry document, even when some information
-    might be dismissed later (f.e. if it was not requested)."""
     kegg_information = {}
     keyword = ""
     information = []
@@ -120,7 +162,7 @@ def parse_entry(lines):
                     kegg_information[keyword].append(information)
                 else:
                     kegg_information.update({keyword: [information]})
-            elif line[0:3].isupper():
+            elif line[0:4].isupper():
                 if len(keyword) and len(information) != 0:
                     if keyword in kegg_information:
                         kegg_information[keyword].append(information)
@@ -135,7 +177,7 @@ def parse_entry(lines):
 
 
 def read_id(entry):
-    """Parse basic informations (id, type and associated organism) as dictionaries"""
+    """Parse entry information (id, type and associated organism) as dictionaries"""
     information = read_information(entry)[0].split()
     entry_id = information[1]
     entry_type = information[2]
@@ -149,75 +191,48 @@ def read_id(entry):
 
 def read_reference(entry):
     """Parse reference information(pmid, authors, title and journal as keys with corresponding value) as a dictionary"""
-    # EXPECTED INPUT example:
-    # kegg_information = {
-    #                      'REFERENCE' : [
-    #                                       [
-    #                                       'REFERENCE   PMID:11939774',
-    #                                       'AUTHORS   Cheong CG, Bauer CB, Brushaber KR, Escalante-Semerena JC,
-    #                                       Rayment I',
-    #                                       'TITLE     Three-dimensional structure of the L-threonine-O-3-phosphate
-    #                                       decarboxylase (CobD) enzyme from Salmonella enterica.',
-    #                                       'JOURNAL   Biochemistry 41:4798-808 (2002)',
-    #                                       'DOI:10.1021/bi012111w'
-    #                                       ],
-    #                                       [
-    #                                       'REFERENCE   PMID:23555801',
-    #                                       'AUTHORS   Bernal-Quiros M, Wu YY, Alarcon-Riquelme ME, Castillejo-Lopez C',
-    #                                       'TITLE     BANK1 and BLK act through phospholipase C gamma 2 in B-cell
-    #                                       'signaling.',
-    #                                       'JOURNAL   PLoS One 8:e59842 (2013)',
-    #                                       'DOI:10.1371/journal.pone.0059842',
-    #                                       ]
-    #                                   ]
-    #                   }
-    #
-    # EXPECTED OUTPUT example:
-    # reference_dictionary = {
-    #                           'dbxref': 'PMID:11939774'
-    #                           'authors': ['Cheong CG', 'Bauer CB', 'Brushaber KR', 'Escalante-Semerena JC',
-    #                                       'Rayment I']
-    #                           'title': 'Three-dimensional structure of the L-threonine-O-3-phosphate decarboxylase
-    #                                     (CobD) enzyme from Salmonella enterica.'
-    #                           'journal': 'BANK1 and BLK act through phospholipase C gamma 2 in B-cell signaling.'
-    #                           'DOI': 'DOI:10.1021/bi012111w'
-    #
-    #
-    #
-    #
-    #
-    #
+    # expected input (example):
+    #  [
+    #       'REFERENCE   PMID:11939774',
+    #       'AUTHORS   Cheong CG, Bauer CB, Brushaber KR, Escalante-Semerena JC, Rayment I',
+    #       'TITLE     Three-dimensional structure of the L-threonine-O-3-phosphate decarboxylase (CobD) enzyme from Salmonella enterica.',
+    #       'JOURNAL   Biochemistry 41:4798-808 (2002)',
+    #       'DOI:10.1021/bi012111w'
+    #      ],
 
-    reference_dictionary = {}
-    reference_id = []
-    authors = []
-    title = []
-    journal = []
+    # output:
+    # [
+    #   {
+    #     'title': '..',
+
+    #   }
+    # ]
+    reference_output = []
     for lines in entry:
+        next_reference = {"dbxref": "", "authors": "", "title": "", "journal": "",
+                          "doi": ""}  # Create a new Dictionary with empty values
         for line in lines:
             if line.startswith("REFERENCE"):
-                reference_id.append("".join(line.split(":")[1]))
-                # print(reference_id)  # ###############################################################################
+                next_reference["dbxref"] = "".join(line.strip().split(" ", )[-1].replace("[", "").replace("]", ""))
             if line.startswith("  AUTHORS"):
-                authors.append(" ".join(line.split()[1:]))
+                next_reference["authors"] = " ".join(line.split()[1:])
             if line.startswith("  TITLE"):
-                title.append(" ".join(line.split()[1:]))
+                next_reference["title"] = " ".join(line.split()[1:])
             if line.startswith("  JOURNAL"):
-                journal.append(" ".join(line.split()[1:]))
-        reference_dictionary.update({"dbxref": reference_id[0], "authors": authors[0].split(","),
-                                     "title": title[0], "journal": journal[0]})
-    # print(reference_dictionary)
-    return reference_dictionary
+                next_reference["journal"] = " ".join(line.split()[1:])
+            if line.strip().startswith("DOI:"):
+                next_reference["DOI"] = line.split(":")[1:]
+        reference_output.append(next_reference)
+    return reference_output
 
 
-def read_brite(entry):
+def test(entry):
     """Parse brite information as an adjacency dictionary containing a list of vertices and a list of edges.
      The combination of the two lists yields a directed, unweighted, acyclic and labeled Graph g=(v,e). The labels of
-     the vertices are included in the list of vertices ("vertices) and include the scientific name as well as an
-     assigned number (representing their number of addition to the list)."""
+     the vertices are included in the list of vertices ("vertices) and include the scientific name"""
     tree = {}
     vertices = []  # list of tuples of labels and count of vertices
-    edges = []  # list of edges from roots to branches
+    edges = {}  # list of edges from roots to branches
     vertices_counter = 0
     stack = []
     for lines in entry:
@@ -227,19 +242,51 @@ def read_brite(entry):
                 stack = [(" ".join(line.split()), vertices_counter)]
             else:  # line is a branch
                 new_branch = (" ".join(line.split()), vertices_counter)
-                if depth <= len(stack):  # line is a new branch not from the line above, stack is emptied until depth fits
+                if depth <= len(stack):  # line is a branch not from the line above, stack is emptied until depth fits
                     stack = stack[:depth]
                 else:  # line is a new branch of the branch above
                     pass
                 stack.append(new_branch)
-            vertices.append(stack[-1])
+            vertices.append(stack[-1][0])  # append name of v. only, v-counter unnecessary because equals position
             if len(stack) == 1:  # only root in stack
                 pass
             else:  # more than root in stack
-                edges.append({stack[-2][1]: stack[-1][1]})
+                edges[stack[-2]][1].append(stack[-1][1])
             vertices_counter += 1
         tree.update({"vertices": vertices})
         tree.update({"edges": edges})
+    return tree
+
+
+def read_brite(entry):
+    tree = {}
+    # create list of vertices
+    vertices = []
+    for lines in entry:
+        for line in lines:
+            vertices.append(" ".join(line.replace("BRITE", "").split()))
+
+    # create list of edges
+    stack = []
+    edges = {str(i): [] for i, _ in enumerate(vertices)}
+    for lines in entry:
+        for line in lines:
+            depth = get_depth(line)-12
+            if depth <= 0:
+                stack = [(" ".join(line.replace("BRITE", "").split()), len(stack))]
+            else:
+                new_branch = (" ".join(line.split()), len(stack))
+                if depth <= len(stack):  # line is a branch not from the line above, stack is emptied until depth fits
+                    stack = stack[:depth]
+                else:  # line is a new branch of the branch above
+                    pass
+                stack.append(new_branch)
+            if len(stack) == 1:  # only root in stack
+                pass
+            else:  # more than root in stack
+                edges[str(vertices.index(stack[-2][0]))].append(str(vertices.index(stack[-1][0])))
+    tree.update({"vertices": vertices})
+    tree.update({"edges": edges})
     return tree
 
 
@@ -249,9 +296,14 @@ def read_dbxrefs(entry):
     for lines in entry:
         for line in lines:
             line = line.strip().split()
-            for word in line[1:]:
-                dbxref_tuple = (line[0], word)
-                dbxref_id.append("".join(dbxref_tuple))
+            if "DBLINKS" in line[0]:
+                for word in line[2:]:
+                    dbxref_tuple = (line[1], word)
+                    dbxref_id.append("".join(dbxref_tuple))
+            else:
+                for word in line[1:]:
+                    dbxref_tuple = (line[0], word)
+                    dbxref_id.append("".join(dbxref_tuple))
     return dbxref_id
 
 
@@ -260,7 +312,10 @@ def read_information(entry):
     information = []
     for lines in entry:
         for line in lines:
-            information.append(" ".join(line.split()))
+            information.append(" ".join(line.replace("NAME", "").replace("DEFINITION", "").replace("", "")
+                                        .replace("ORGANISM", "").replace("PATHWAY", "").replace("GENES", "")
+                                        .replace("ORTHOLOGY", "").replace("MOTIF", "").replace("FORMULA", "")
+                                        .replace("REACTION", "").split()))
     return information
 
 
