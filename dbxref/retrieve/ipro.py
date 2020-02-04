@@ -59,7 +59,6 @@ def retrieve(dbxrefs, basics, hierarchy, wikipedia, literature, cross_references
         r = requests.get(json_url)
         logger.debug('Content: %s', r.text)
         ipro = json.loads(r.text)
-
         output = {}
         if basics:
             try:
