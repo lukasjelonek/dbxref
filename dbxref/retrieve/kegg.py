@@ -27,9 +27,9 @@ def main():
     parser.add_argument("dbxrefs", nargs=argparse.REMAINDER)
     args = parser.parse_args()
 
+    # if nothing specified, output all available information for the entry
     if None not in (args.basics, args.pathway, args.brite, args.dbxref_links, args.genes, args.reference,
                     args.orthology, args.motif, args.formula, args.reaction):
-        # if nothing specified, output all available information for the entry
         args.basics = True
         args.pathway = True
         args.brite = True
@@ -51,7 +51,7 @@ def main():
 
 def retrieve(dbxrefs, basics, pathway, brite, dbxrefs_links, genes, reference, orthology, motif, formula, reaction):
     """Parse kegg text file and return a list "documents" including the extracted information of the given entries. """
-
+    print(dbxrefs)
     resolved = dbxref.resolver.resolve(dbxrefs, check_existence=False)
     documents = []
     for entry in resolved:
