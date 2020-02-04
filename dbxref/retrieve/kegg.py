@@ -51,7 +51,6 @@ def main():
 
 def retrieve(dbxrefs, basics, pathway, brite, dbxrefs_links, genes, reference, orthology, motif, formula, reaction):
     """Parse kegg text file and return a list "documents" including the extracted information of the given entries. """
-    print(dbxrefs)
     resolved = dbxref.resolver.resolve(dbxrefs, check_existence=False)
     documents = []
     for entry in resolved:
