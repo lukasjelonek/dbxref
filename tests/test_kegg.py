@@ -4,14 +4,16 @@ from dbxref.retrieve import kegg
 
 class TestKegg(unittest.TestCase):
 
+    # Test if kegg retriever gives any output
     def test_output(self):
         documents = kegg.retrieve([{"db": "KEGG", "id": "K00121"}], basics=True, brite=True, pathway=True,
                                   dbxrefs_links=True, formula=True, reaction=True, genes=True, motif=True,
                                   orthology=True, reference=True)
         self.assertTrue(documents)
 
+    # Test parsing and saving of a graph(v,e) in an adjacency list.
     def test_brite_output(self):
-        # Test parsing and saving of a graph(v,e) in an adjacency list. Tree with one root and one continuous branch
+        # Tree with one root and one continuous branch
         brite_example_1 = [["BRITE       Root1"],
                            ["             branch1"],
                            ["              branch2"],
@@ -30,7 +32,7 @@ class TestKegg(unittest.TestCase):
                                   }
         self.assertEqual(kegg.read_brite(brite_example_1), brite_example_output_1)
 
-        # Test parsing and saving of a graph(v,e) in an adjacency list. Tree with one root but two branches.
+        # Tree with one root but two branches.
         brite_example_2 = [["BRITE       Root1"],
                            ["             branch1"],
                            ["              branch2"],
@@ -49,7 +51,7 @@ class TestKegg(unittest.TestCase):
                                   }
         self.assertEqual(kegg.read_brite(brite_example_2), brite_example_output_2)
 
-        # Test parsing and saving of a graph(v,e) in an adjacency list. Tree with a second root and separate branches
+        # Tree with a second root and separate branches
         brite_example_3 = [["BRITE       Root1"],
                            ["             branch1"],
                            ["              branch2"],
@@ -68,7 +70,7 @@ class TestKegg(unittest.TestCase):
                                   }
         self.assertEqual(kegg.read_brite(brite_example_3), brite_example_output_3)
 
-        # Test parsing and saving of a graph(v,e) in an adjacency list. Tree with one root and branch, bu multiple leafs
+        # Tree with one root and branch, bu multiple leafs
         brite_example_4 = [["BRITE       Root1"],
                            ["             branch1"],
                            ["              branch2"],
@@ -87,7 +89,7 @@ class TestKegg(unittest.TestCase):
                                   }
         self.assertEqual(kegg.read_brite(brite_example_4), brite_example_output_4)
 
-        # Test parsing and saving of a graph(v,e) in an adjacency list. Tree with a mix of above testing methods
+        # Tree with a mix of above testing methods
         brite_example_5 = [["BRITE       Root1"],
                            ["             branch1"],
                            ["              branch2"],
