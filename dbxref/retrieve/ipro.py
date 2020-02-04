@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 def main():
     """main()method for script usage"""
-    # AVAILABLE:
+    # AVAILABLE for implementation:
     # 'go_terms', 'member_databases', 'integrated', 'entry_annotations', ''
     #
     # USED:
@@ -50,15 +50,18 @@ def main():
 
 
 def retrieve(dbxrefs, basics, hierarchy, wikipedia, literature, cross_references, overlaps):
-    """Insert description here"""
+    """Retrieve json document from InterPro REST api, filter information by selected Options and parse into new json"""
     resolved = dbxref.resolver.resolve(dbxrefs, check_existence=False)
     documents = []
     for entry in resolved:
+        # Construct URL for retrieve
         json_url = entry['locations']['json'][0]
         logger.debug('URL: %s', json_url)
         r = requests.get(json_url)
         logger.debug('Content: %s', r.text)
         ipro = json.loads(r.text)
+
+        # Parse retrieved json file by selected Options
         output = {}
         if basics:
             try:
