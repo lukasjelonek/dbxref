@@ -134,8 +134,8 @@
 - name: RefSeq
   prefixes: ['RefSeq']
   resources:
-    xml: ["https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&term=srcdb_refseq[property]&id=%i",
-    "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&term=srcdb_refseq[property]&id=%i"]
+    xml: ["https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&term=srcdb_refseq[property]&id=%i&retmode=xml",
+    "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&term=srcdb_refseq[property]&id=%i&retmode=xml"]
   retriever:
       type: 'internal'
       location: 'dbxref.retrieve.refseq'
