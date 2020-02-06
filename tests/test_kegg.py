@@ -5,11 +5,11 @@ from dbxref.retrieve import kegg
 class TestKegg(unittest.TestCase):
 
     def test_output(self):
+        """Test if kegg.py gives any output"""
         documents = kegg.retrieve([{"db": "KEGG", "id": "K00121"}], basics=True, brite=True, pathway=True,
                                   dbxrefs_links=True, formula=True, reaction=True, genes=True, motif=True,
                                   orthology=True, reference=True)
         self.assertTrue(documents)
-
 
     def test_brite_output_1(self):
         # Test parsing and saving of a graph(v,e) in an adjacency list. Tree with one root and one continuous branch
