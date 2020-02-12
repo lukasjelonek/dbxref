@@ -68,6 +68,8 @@ def retrieve(dbxrefs, basics, dbsource, references):
 
 
 def read_basics(root):
+    """Finds basic information such as locus, dbxref, definition, organism, molecular information and representational
+    structure, if available, and puts out a dictionary containing the information"""
     locus = root.find("Seq-entry_seq/Bioseq/Bioseq_id/Seq-id/Seq-id_swissprot/Textseq-id/Textseq-id_name").text
     dbxref_id = "GI:" + root.find("Seq-entry_seq/Bioseq/Bioseq_id/Seq-id/Seq-id_swissprot/Textseq-id/"
                                   "Textseq-id_accession").text
@@ -86,6 +88,7 @@ def read_basics(root):
 
 
 def read_dbsource(root):
+    """Finds databank sources in the xmland puts out a list with all dbxrefs found."""
     dbxref_list = []
     for dbtag in root.findall("Seq-entry_seq/Bioseq/Bioseq_descr/Seq-descr/Seqdesc/Seqdesc_sp/SP-block/SP-block_dbref/"
                               "Dbtag"):
@@ -94,8 +97,9 @@ def read_dbsource(root):
 
 
 def read_references(root):
+    """Finds reference information in the xml and puts out a list containing information for authors, title, journal
+    and pubmed DOI"""
     references = []
-
     for cit_art in root.findall("Seq-entry_seq/Bioseq/Bioseq_descr/Seq-descr/Seqdesc/Seqdesc_pub/Pubdesc/Pubdesc_pub/"
                                 "Pub-equiv/Pub/Pub_article/Cit-art"):
         author_list = []
@@ -126,7 +130,6 @@ def read_references(root):
                            "journal": journal,
                            "doi": doi
                            })
-
     return {"references": references}
 
 
