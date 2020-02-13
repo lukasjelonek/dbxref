@@ -67,8 +67,10 @@
       html: ["http://rfam.xfam.org/family/%i"]
       xml: ["http://rfam.xfam.org/family/%i?content-type=text%2Fxml"]
       json: ["https://rfam.org/family/%i?content-type=application/json"]
-  # does not work
-  # check_existence: "http://rfam.xfam.org/family/%i?content-type=text%2Fxml"
+  check_existence: "http://rfam.xfam.org/family/%i?content-type=text%2Fxml"
+  retriever:
+    type: 'internal'
+    location: 'dbxref.retrieve.rfam
 - name: Pubmed
   prefixes: ["Pubmed"]
   resources:
