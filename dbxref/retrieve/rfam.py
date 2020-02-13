@@ -39,8 +39,8 @@ def retrieve(dbxrefs, basics, references):
         r = requests.get(json_url)
         logger.debug("Content: %s", r.text)
         rfam = json.loads(r.text)
-        # Parse information
         output = {}
+        # Parse basic information
         if basics:
             try:
                 output.update({"dbxref": rfam["rfam"]["acc"],
@@ -51,6 +51,7 @@ def retrieve(dbxrefs, basics, references):
             except KeyError:
                 print("Basic information weren't fully or only partly available. "
                       "Please check the dbxref and the Rfam-site.")
+        # Parse reference information
         if references:
             try:
                 output.update({"references": {"author": rfam["rfam"]["curation"]["author"],
@@ -59,7 +60,8 @@ def retrieve(dbxrefs, basics, references):
                                               }
                                })
             except KeyError:
-                print("References weren't fully or only partly available. Please check the dbxref and the Rfam-site")
+                print("References weren't fully or only partly available. "
+                      "Please check the dbxref and the Rfam-site")
         documents.append(output)
 
     return documents
