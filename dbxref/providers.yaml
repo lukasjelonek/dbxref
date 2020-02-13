@@ -72,9 +72,12 @@
     type: 'internal'
     location: 'dbxref.retrieve.rfam'
 - name: Pubmed
-  prefixes: ["Pubmed"]
+  prefixes: ["Pubmed", "PM"]
   resources:
-      html: ["http://www.ncbi.nlm.nih.gov/pubmed/%i"]
+      html: ['http://www.ncbi.nlm.nih.gov/pubmed/%i']
+      text: ['https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=%i']
+      xml: ['https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=%i&retmode=xml']
+      json: ['https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=%i&retmode=json']
   check_existence: "http://www.ncbi.nlm.nih.gov/pubmed/%i"
 - name: Protein Families
   prefixes: ["PFAM"]
