@@ -70,7 +70,7 @@
   check_existence: "http://rfam.xfam.org/family/%i?content-type=text%2Fxml"
   retriever:
     type: 'internal'
-    location: 'dbxref.retrieve.rfam
+    location: 'dbxref.retrieve.rfam'
 - name: Pubmed
   prefixes: ["Pubmed"]
   resources:
