@@ -22,6 +22,7 @@ Output
 ------
 
 output scheme::
+
 [
     {
         "dbxref": "GI:P0ABT0",
