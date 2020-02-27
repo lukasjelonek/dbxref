@@ -122,9 +122,9 @@
       text: ["http://rest.kegg.jp/get/%i"]
   check_existence: "http://rest.kegg.jsdjkaap/get/%i"
   # not implemented yet
-  # retriever:
-  #    type: 'internal'
-  #    location: 'dbxref.retrieve.kegg'
+  retriever:
+      type: 'internal'
+      location: 'dbxref.retrieve.kegg'
 - name: HTTP
   prefixes: ["http", "https"]
   resources:

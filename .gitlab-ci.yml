@@ -1,7 +1,7 @@
 # This file is a template, and might need editing before it works on your project.
 # Official language image. Look for the different tagged releases at:
 # https://hub.docker.com/r/library/python/tags/
-image: python:3-alpine
+image: python:3-buster
 
 # Change pip's cache directory to be inside the project directory since we can
 # only cache local items.
@@ -23,8 +23,8 @@ before_script:
   - pip install virtualenv
   - virtualenv venv
   - source venv/bin/activate
+  - apt-get install git
   - pip install -r requirements.txt
-  - apk add git
 
 stages:
   - test
