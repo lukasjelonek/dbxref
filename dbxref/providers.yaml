@@ -113,7 +113,7 @@
       type: 'internal'
       location: 'dbxref.retrieve.gene_ontology'
 - name: KEGG
-  prefixes: ["KO", "KEGG", "hsa"]
+  prefixes: ["KO", "KEGG"]
   resources:
       html: ["https://www.genome.jp/dbget-bin/www_bget?%i"]
       text: ["http://rest.kegg.jp/get/%i"]
