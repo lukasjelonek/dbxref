@@ -70,32 +70,32 @@ def retrieve(dbxrefs, basics=True, hierarchy=True, wikipedia=True, literature=Tr
                               entry_id=ipro["metadata"]["entry_id"], name=ipro["metadata"]["name"],
                               source_database=ipro["metadata"]["source_database"])
             except KeyError:
-                print("One or more basic information were not available for the given entry. Please check your output.")
+                logger.warning("One or more basic information were not available for the given entry. Please check your output.")
         if hierarchy:
             try:
                 output.update(hierarchy=ipro["metadata"]["hierarchy"])
             except KeyError:
-                print("Hierarchy information was not available for the given entry.")
+                logger.warning("Hierarchy information was not available for the given entry.")
         if wikipedia:
             try:
                 output.update(wikipedia=ipro["metadata"]["wikipedia"])
             except KeyError:
-                print("Wikipedia articel were not available for the given entry.")
+                logger.warning("Wikipedia articel were not available for the given entry.")
         if literature:
             try:
                 output.update(literature=ipro["metadata"]["literature"])
             except KeyError:
-                print("Literature was not available for the given entry.")
+                logger.warning("Literature was not available for the given entry.")
         if cross_references:
             try:
                 output.update(cross_references=ipro["metadata"]["cross_references"])
             except KeyError:
-                print("Cross_references were not available for the given entry.")
+                logger.warning("Cross_references were not available for the given entry.")
         if overlaps:
             try:
                 output.update(overlaps=ipro["metadata"]["overlaps_with"])
             except KeyError:
-                print("Overlap information was not available for the given entry.")
+                logger.warning("Overlap information was not available for the given entry.")
         documents.append(output)
     return documents
 
