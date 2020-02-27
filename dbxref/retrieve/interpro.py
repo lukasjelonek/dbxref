@@ -49,7 +49,7 @@ def main():
     print(json.dumps(documents, sort_keys=True, indent=4))
 
 
-def retrieve(dbxrefs, basics, hierarchy, wikipedia, literature, cross_references, overlaps):
+def retrieve(dbxrefs, basics=True, hierarchy=True, wikipedia=True, literature=True, cross_references=True, overlaps=True):
     """Retrieve json document from InterPro REST api, filter information by selected Options and parse into new json"""
     resolved = dbxref.resolver.resolve(dbxrefs, check_existence=False)
     documents = []
@@ -62,7 +62,7 @@ def retrieve(dbxrefs, basics, hierarchy, wikipedia, literature, cross_references
         ipro = json.loads(r.text)
 
         # Parse retrieved json file by selected Options
-        output = {}
+        output = {"id": entry["dbxref"]}
         if basics:
             try:
                 output.update(accession=ipro["metadata"]["accession"], entry_type=ipro["metadata"]["type"],

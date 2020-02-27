@@ -97,6 +97,9 @@
   resources:
       html: ["https://www.ebi.ac.uk/interpro/entry/%i"]
       json: ["https://www.ebi.ac.uk/interpro/api/entry/InterPro/%i"]
+  retriever:
+      type: 'internal'
+      location: 'dbxref.retrieve.interpro'
   # does not work
   # check_existence: "http://www.ebi.ac.uk/interpro/entry/%i"
 - name: GeneID
