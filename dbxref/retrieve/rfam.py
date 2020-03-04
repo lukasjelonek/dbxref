@@ -28,7 +28,7 @@ def main():
     print(json.dumps(documents, sort_keys=True, indent=4))
 
 
-def retrieve(dbxrefs, basics, references):
+def retrieve(dbxrefs, basics=True, references=True):
     """Retrieve rfam json documents and parse into dbxref json format"""
     resolved = dbxref.resolver.resolve(dbxrefs, check_existence=False)
     documents = []
@@ -39,11 +39,11 @@ def retrieve(dbxrefs, basics, references):
         r = requests.get(json_url)
         logger.debug("Content: %s", r.text)
         rfam = json.loads(r.text)
-        output = {}
+        output = {"id": entry["dbxref"]}
         # Parse basic information
         if basics:
             try:
-                output.update({"dbxref": rfam["rfam"]["acc"],
+              output.update({"dbxref": "RFAM:" + rfam["rfam"]["acc"],
                                "name": rfam["rfam"]["id"],
                                "description": rfam["rfam"]["description"],
                                "comment": rfam["rfam"]["comment"]
@@ -51,6 +51,7 @@ def retrieve(dbxrefs, basics, references):
             except KeyError:
                 print("Basic information weren't fully or only partly available. "
                       "Please check the dbxref and the Rfam-site.")
+                raise
         # Parse reference information
         if references:
             try:
@@ -62,6 +63,7 @@ def retrieve(dbxrefs, basics, references):
             except KeyError:
                 print("References weren't fully or only partly available. "
                       "Please check the dbxref and the Rfam-site")
+                raise
         documents.append(output)
 
     return documents

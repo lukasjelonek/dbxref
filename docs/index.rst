@@ -16,6 +16,9 @@ Welcome to DBXRef resolve and retrieval tool's documentation!
    sequence_ontology
    taxonomy
    uniprot
+   kegg
+   interpro
+   rfam
 
 
 
