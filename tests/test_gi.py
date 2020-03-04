@@ -5,7 +5,7 @@ from dbxref.retrieve import gi
 class TestGI(unittest.TestCase):
 
     def test_output(self):
-        documents = gi.retrieve({"db": "IG", "id": "P0ABT0", }, basics=True, dbsource=True, references=True)
+        documents = gi.retrieve([{"db": "GI", "id": "P0ABT0"}], basics=True, dbsource=True, references=True)
         self.assertTrue(documents)
 
 

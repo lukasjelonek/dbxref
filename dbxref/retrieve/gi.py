@@ -33,7 +33,7 @@ def main():
     print(json.dumps(documents, sort_keys=True, indent=4))
 
 
-def retrieve(dbxrefs, basics, dbsource, references):
+def retrieve(dbxrefs, basics=True, dbsource=True, references=True):
     """Retrieve Protein data as xml and parse into json format"""
     resolved = dbxref.resolver.resolve(dbxrefs, check_existence=False)
     documents = []
@@ -42,7 +42,7 @@ def retrieve(dbxrefs, basics, dbsource, references):
         logger.debug("URL: %s", xml_url)
         gi = requests.get(xml_url)
         logger.debug("Content: %s", gi.text)
-        output = {}
+        output = {"id": entry["dbxref"]}
         try:
             root = ET.fromstring(gi.text)
             if basics:
@@ -51,18 +51,22 @@ def retrieve(dbxrefs, basics, dbsource, references):
                 except KeyError:
                     print("One ore more of the basic information were not available for given dbxref. "
                           "Please check the source data.")
+                    raise
             if dbsource:
                 try:
                     output.update(read_dbsource(root))
                 except KeyError:
                     print("Source database information wasn't or wasn't fully available. Please check the source data")
+                    raise
             if references:
                 try:
                     output.update(read_references(root))
                 except KeyError:
                     print("reference information wasn't or wasn't fully available. Please check the source data")
+                    raise
         except (RuntimeError, ET.ParseError):
             print("An error occurred")
+            raise
         documents.append(output)
     return documents
 
