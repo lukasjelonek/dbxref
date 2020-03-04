@@ -136,3 +136,7 @@
   prefixes: ['eggnog']
   resources:
     html: ["http://eggnogdb.embl.de/#/app/results?target_nogs=%i"]
+- name: Conserved domain database
+  prefixes: ["CDD"]
+  resources:
+      html: ["https://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=%i"]
