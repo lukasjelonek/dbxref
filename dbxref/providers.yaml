@@ -65,8 +65,11 @@
   resources:
       html: ["http://rfam.xfam.org/family/%i"]
       xml: ["http://rfam.xfam.org/family/%i?content-type=text%2Fxml"]
-  # does not work
-  # check_existence: "http://rfam.xfam.org/family/%i?content-type=text%2Fxml"
+      json: ["https://rfam.org/family/%i?content-type=application/json"]
+  check_existence: "http://rfam.xfam.org/family/%i?content-type=text%2Fxml"
+  retriever:
+    type: 'internal'
+    location: 'dbxref.retrieve.rfam'
 - name: Pubmed
   prefixes: ["Pubmed"]
   resources:
@@ -91,7 +94,11 @@
 - name: InterPro
   prefixes: ["InterPro"]
   resources:
-      html: ["http://www.ebi.ac.uk/interpro/entry/%i"]
+      html: ["https://www.ebi.ac.uk/interpro/entry/%i"]
+      json: ["https://www.ebi.ac.uk/interpro/api/entry/InterPro/%i"]
+  retriever:
+      type: 'internal'
+      location: 'dbxref.retrieve.interpro'
   # does not work
   # check_existence: "http://www.ebi.ac.uk/interpro/entry/%i"
 - name: GeneID
@@ -117,10 +124,9 @@
       html: ["https://www.genome.jp/dbget-bin/www_bget?%i"]
       text: ["http://rest.kegg.jp/get/%i"]
   check_existence: "http://rest.kegg.jsdjkaap/get/%i"
-  # not implemented yet
-  # retriever:
-  #    type: 'internal'
-  #    location: 'dbxref.retrieve.kegg'
+  retriever:
+      type: 'internal'
+      location: 'dbxref.retrieve.kegg'
 - name: HTTP
   prefixes: ["http", "https"]
   resources:
