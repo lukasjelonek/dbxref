@@ -24,7 +24,7 @@ def main():
     print(json.dumps(documents, sort_keys=True, indent=4))
 
 
-def retrieve(dbxrefs, matrix, basics):
+def retrieve(dbxrefs, matrix=False, basics=True):
     """Retrieve text document from expasy/hamap api and parse into json format."""
     # example list input:
     # [
@@ -69,7 +69,7 @@ def retrieve(dbxrefs, matrix, basics):
         r = requests.get(text_url)
         logger.debug('Content: %s', r.text)
         lines = r.text.strip().split('\n')
-        output = {}
+        output = {"id": entry["dbxref"]}
         matrix_list = []
         for line in lines:
             if basics:
@@ -85,18 +85,21 @@ def retrieve(dbxrefs, matrix, basics):
                     if line.startswith("DT"):
                         output.update({"dates": read_date(line)})
                 except RuntimeError:
-                    print("Basic information were not or only partly available.")
+                    logger.warning("Basic information were not or only partly available.")
+                    raise
             if matrix:
                 try:
                     if line.startswith("MA") and matrix:
                         matrix_list.append(line.replace("MA", "").strip())
                 except RuntimeError:
-                    print("Matrix was not available.")
+                    logger.warning("Matrix was not available.")
+                    raise
         if matrix and matrix_list:
             try:
                 output.update({"matrix": matrix_list})
             except RuntimeError:
-                print("An error occurred regarding the matrix.")
+                logger.warning("An error occurred regarding the matrix.")
+                raise
         documents.append(output)
     return documents
 
