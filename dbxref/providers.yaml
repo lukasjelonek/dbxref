@@ -8,11 +8,14 @@
       type: 'internal'
       location: 'dbxref.retrieve.enzyme'
 - name: HAMAP
-  prefixes: ["HAMAP"]
+  prefixes: ["HAMAP", "HM"]
   resources:
       html: ["https://hamap.expasy.org/signature/%i"]
       text: ["https://hamap.expasy.org/signature/%i.txt"]
   check_existence: "https://hamap.expasy.org/signature/%i.txt"
+  retriever:
+    type: 'internal'
+    location: 'dbxref.retrieve.hamap'
 - name: OMA - Orthologous MAtrix
   prefixes: ["OMA"]
   resources:
