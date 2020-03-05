@@ -14,7 +14,6 @@ def main():
     """main()method for script usage"""
     parser = argparse.ArgumentParser(description="Retrieves Nucleotide or Protein Sequences data from RefSeq")
     parser.add_argument("--basics", "-b", action="store_true", help="Include basic information")
-    parser.add_argument("--topology", "-to", action="store_true", help="Include topology")
     parser.add_argument("--taxonomy", "-ta", action="store_true", help="Include taxonomy")
     parser.add_argument("--references", "-r", action="store_true", help="Include references")
     parser.add_argument("--source_db", "-s", action="store_true", help="Include source database")
@@ -22,21 +21,20 @@ def main():
     parser.add_argument("dbxrefs", nargs=argparse.REMAINDER)
     args = parser.parse_args()
     # when not specified include all data available
-    if None not in (args.basics, args.topology, args.taxonomy, args.references, args.source_db, args.features_table):
+    if None not in (args.basics, args.taxonomy, args.references, args.source_db, args.features_table):
         args.basics = True
-        args.topology = True
         args.taxonomy = True
         args.references = True
         args.source_db = True
         args.features_table = True
 
     dbxrefs = dbxref.resolver.convert_to_dbxrefs(args.dbxrefs)
-    documents = retrieve(dbxrefs, basics=args.basics, topology=args.topology, taxonomy=args.taxonomy,
+    documents = retrieve(dbxrefs, basics=args.basics, taxonomy=args.taxonomy,
                          references=args.references, source_db=args.source_db, features_table=args.features_table)
     print(json.dumps(documents, sort_keys=True, indent=4))
 
 
-def retrieve(dbxrefs, basics, topology, taxonomy, references, source_db, features_table):
+def retrieve(dbxrefs, basics=True, taxonomy=False, references=False, source_db=False, features_table=False):
     """Retrieves Nucleotide or Protein Sequence data from RefSeq as xml and convert it to json format."""
     # expected xml input (example):
     # <GBSet>
@@ -86,35 +84,41 @@ def retrieve(dbxrefs, basics, topology, taxonomy, references, source_db, feature
                     try:
                         output.update(read_basics(child))
                     except AttributeError:
-                        print("One ore more of the basic information were not available for given dbxref. "
+                        logger.warning("One ore more of the basic information were not available for given dbxref. "
                               "Please check the dbxref.")
-                if topology:
+                        raise
                     try:
                         output.update(read_topology(child))
                     except AttributeError:
-                        print("No topology available for given dbxref")
+                        logger.warning("No topology available for given dbxref")
+                        raise
                 if taxonomy:
                     try:
                         output.update(read_taxonomy(child))
                     except AttributeError:
-                        print("No taxonomy available for given dbxref")
+                        logger.warning("No taxonomy available for given dbxref")
+                        raise
                 if references:
                     try:
                         output.update(read_references(child))
                     except AttributeError:
-                        print("No references available for given dbxref")
+                        logger.warning("No references available for given dbxref")
+                        raise
                 if source_db:
                     try:
                         output.update(read_source_db(child))
                     except AttributeError:
-                        print("No source database available for given dbxref")
+                        logger.warning("No source database available for given dbxref")
+                        raise
                 if features_table:
                     try:
                         output.update(read_features(child))
                     except AttributeError:
-                        print("No table of features available for given dbxref")
+                        logger.warning("No table of features available for given dbxref")
+                        raise
         except (RuntimeError, ET.ParseError):
-            print("An error occurred")
+            logger.warning("An error occurred")
+            raise
         documents.append(output)
     return documents
 
