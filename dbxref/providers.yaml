@@ -79,6 +79,9 @@
       xml: ['https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=%i&retmode=xml']
       json: ['https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=%i&retmode=json']
   check_existence: "http://www.ncbi.nlm.nih.gov/pubmed/%i"
+  retriever:
+    type: 'internal'
+    location: 'dbxref.retrieve.pubmed'
 - name: Protein Families
   prefixes: ["PFAM"]
   resources:
