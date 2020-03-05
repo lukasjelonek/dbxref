@@ -116,7 +116,7 @@
       html: ["http://www.ncbi.nlm.nih.gov/gene/%i"]
       xml: ["http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=gene&dopt=xml&sort=&val=%i&retmode=file"]
   # does not work
-  #  check_existence: "http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=gene&dopt=xml&sort=&val=%i&retmode=file"
+  # check_existence: "http://www.ncbi.nlm.nih.gov/sviewer/viewer.cgi?tool=portal&db=gene&dopt=xml&sort=&val=%i&retmode=file"
 - name: Gene Ontology
   prefixes: ["GO"]
   resources:
@@ -145,6 +145,14 @@
   prefixes: ['eggnog']
   resources:
     html: ["http://eggnogdb.embl.de/#/app/results?target_nogs=%i"]
+- name: RefSeq
+  prefixes: ['RefSeq']
+  resources:
+    xml: ["https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&term=srcdb_refseq[property]&id=%i&retmode=xml",
+    "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&term=srcdb_refseq[property]&id=%i&retmode=xml"]
+  retriever:
+      type: 'internal'
+      location: 'dbxref.retrieve.refseq'
 - name: Conserved domain database
   prefixes: ["CDD"]
   resources:
