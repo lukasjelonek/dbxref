@@ -48,7 +48,7 @@ def main():
     print(json.dumps(documents))
 
 
-def retrieve(dbxrefs, basics = True, pathway = True, brite = True, dbxrefs_links = True, genes = True, reference = True, orthology = True, motif = True, formula = True, reaction = True):
+def retrieve(dbxrefs, basics = True, pathway = True, brite = True, dbxrefs_links = True, genes = False, reference = True, orthology = True, motif = True, formula = True, reaction = True):
     """Parse kegg text file and return a list "documents" including the extracted information of the given entries. """
 
     resolved = dbxref.resolver.resolve(dbxrefs, check_existence=False)
@@ -79,52 +79,52 @@ def retrieve(dbxrefs, basics = True, pathway = True, brite = True, dbxrefs_links
             if "ORGANISM" in kegg_information:
                 output.update({"organism": read_information(kegg_information["ORGANISM"])[0]})
             else:
-              logger.warning("No Entry")
+              logger.warn("No Entry")
         if pathway:
             if "PATHWAY" in kegg_information:
                 output.update({"pathways": read_information(kegg_information["PATHWAY"])})
             else:
-              logger.warning("No Pathway")
+              logger.warn("No Pathway")
         if genes:
             if "GENES" in kegg_information:
                 output.update({"genes": read_information(kegg_information["GENES"])})
             else:
-              logger.warning("No Genes")
+              logger.warn("No Genes")
         if orthology:
             if "ORTHOLOGY" in kegg_information:
                 output.update({"ortholog genes": read_information(kegg_information["ORTHOLOGY"])})
             else:
-              logger.warning("No orthology")
+              logger.warn("No orthology")
         if motif:
             if "MOTIF" in kegg_information:
                 output.update({"motif": read_information(kegg_information["MOTIF"])})
             else:
-              logger.warning("No motif")
+              logger.warn("No motif")
         if formula:
             if "FORMULA" in kegg_information:
                 output.update({"chemical formula": read_information(kegg_information["FORMULA"][0])})
             else:
-              logger.warning("No formula")
+              logger.warn("No formula")
         if reaction:
             if "REACTION" in kegg_information:
                 output.update({"reaction partners": read_information(kegg_information["REACTION"])})
             else:
-              logger.warning("No reaction")
+              logger.warn("No reaction")
         if brite:
             if "BRITE" in kegg_information:
                 output.update({"brite": read_brite(kegg_information["BRITE"])})
             else:
-              logger.warning("No brite")
+              logger.warn("No brite")
         if reference:
             if "REFERENCE" in kegg_information:
                 output.update({"reference": read_reference(kegg_information["REFERENCE"])})
             else:
-              logger.warning("No reference")
+              logger.warn("No reference")
         if dbxrefs_links:
             if "DBLINKS" in kegg_information:
                 output.update({"dbxref_links": read_dbxrefs(kegg_information["DBLINKS"])})
             else:
-              logger.warning("No dbxref_links")
+              logger.warn("No dbxref_links")
         documents.append(output)
     return documents
 
