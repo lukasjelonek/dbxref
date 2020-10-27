@@ -54,3 +54,18 @@ Setup a virtualenv for development and install it in editable mode::
 Use the application::
 
     dbxref resolve GO:0097281
+
+Use it as a library::
+
+    # resolve urls for an entry
+    from dbxref import resolver
+    resolver.resolve([{'db': 'taxid', 'id': '12345'}])
+    
+    # => [{'dbxref': 'taxid:12345', 'locations': {'json': ['https://www.ebi.ac.uk/ena/data/taxonomy/v1/taxon/tax-id/12345'], 'xml_ncbi': ['https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=taxonomy&id=12345'], 'xml': ['http://www.uniprot.org/taxonomy/12345.rdf'], 'html': ['http://www.uniprot.org/taxonomy/12345']}, 'status': 'found'}]
+
+    # retrieve an entry
+    from dbxref import retriever
+    retriever.retrieve([{'db':'taxid', 'id': '12345'}])
+
+    # => [{'geneticCodes': {'geneticCode': '11'}, 'scientificName': 'Bacillus virus GA1', 'lineage': ['Viruses', 'Duplodnaviria', 'Heunggongvirae', 'Uroviricota', 'Caudoviricetes', 'Caudovirales', 'Podoviridae', 'Picovirinae', 'Salasvirus'], 'id': 'taxid:12345', 'rank': 'species'}]
+
