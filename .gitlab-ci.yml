@@ -1,43 +1,116 @@
-# This file is a template, and might need editing before it works on your project.
-# Official language image. Look for the different tagged releases at:
-# https://hub.docker.com/r/library/python/tags/
-image: python:3-stretch
-
-# Change pip's cache directory to be inside the project directory since we can
-# only cache local items.
-variables:
-  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
-
-# Pip's cache doesn't store the python packages
-# https://pip.pypa.io/en/stable/reference/pip_install/#caching
-#
-# If you want to also cache the installed packages, you have to install
-# them in a virtualenv and cache it as well.
-cache:
-  paths:
-    - .cache/pip
-    - venv/
-
-before_script:
-  - python -V               # Print out python version for debugging
-  - pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
-  - apt-get install git
-  - pip install -r requirements.txt
-
 stages:
   - test
   - bundle
   - deploy
 
+variables:
+  VERSIONLABELMETHOD: "OnlyIfThisCommitHasVersion" # options: "OnlyIfThisCommitHasVersion","LastVersionTagInGit"
+  ADDITIONALTAGLIST: latest
+  IMAGE_LABELS: >
+    --label org.opencontainers.image.vendor=$CI_SERVER_URL/$GITLAB_USER_LOGIN
+    --label org.opencontainers.image.authors=$CI_SERVER_URL/$GITLAB_USER_LOGIN
+    --label org.opencontainers.image.revision=$CI_COMMIT_SHA
+    --label org.opencontainers.image.source=$CI_PROJECT_URL
+    --label org.opencontainers.image.documentation=$CI_PROJECT_URL
+    --label org.opencontainers.image.licenses=$CI_PROJECT_URL
+    --label org.opencontainers.image.url=$CI_PROJECT_URL
+    --label vcs-url=$CI_PROJECT_URL
+    --label com.gitlab.ci.user=$CI_SERVER_URL/$GITLAB_USER_LOGIN
+    --label com.gitlab.ci.email=$GITLAB_USER_EMAIL
+    --label com.gitlab.ci.tagorbranch=$CI_COMMIT_REF_NAME
+    --label com.gitlab.ci.pipelineurl=$CI_PIPELINE_URL
+    --label com.gitlab.ci.commiturl=$CI_PROJECT_URL/commit/$CI_COMMIT_SHA
+    --label com.gitlab.ci.cijoburl=$CI_JOB_URL
+    --label com.gitlab.ci.mrurl=$CI_PROJECT_URL/-/merge_requests/$CI_MERGE_REQUEST_ID
+
+
+.python:
+  image: python:3-stretch
+  before_script:
+    - python -V               # Print out python version for debugging
+    - pip install virtualenv
+    - virtualenv venv
+    - source venv/bin/activate
+    - apt-get install git
+    - pip install -r requirements.txt
+
+get-latest-git-version:
+  stage: .pre
+  image:
+    name: alpine/git
+    entrypoint: [""]
+  rules:
+    - if: '$VERSIONLABELMETHOD == "LastVersionTagInGit"'
+  script:
+    - |
+      echo "the google kaniko container does not have git and does not have a packge manager to install it"
+      git clone https://github.com/GoogleContainerTools/kaniko.git
+      cd kaniko
+      echo "$(git describe --abbrev=0 --tags)" > ../VERSIONTAG.txt
+      echo "VERSIONTAG.txt contains $(cat ../VERSIONTAG.txt)"
+  artifacts:
+    paths:
+      - VERSIONTAG.txt
+
+# taken from https://gitlab.com/guided-explorations/containers/kaniko-docker-build/-/blob/master/.gitlab-ci.yml
+.build-docker-image:
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - |
+      echo "Building and shipping image to $CI_REGISTRY_IMAGE"
+      #Build date for opencontainers
+      BUILDDATE="'$(date '+%FT%T%z' | sed -E -n 's/(\+[0-9]{2})([0-9]{2})$/\1:\2/p')'" #rfc 3339 date
+      IMAGE_LABELS="$IMAGE_LABELS --label org.opencontainers.image.created=$BUILDDATE --label build-date=$BUILDDATE"
+      #Description for opencontainers
+      BUILDTITLE=$(echo $CI_PROJECT_TITLE | tr " " "_")
+      IMAGE_LABELS="$IMAGE_LABELS --label org.opencontainers.image.title=$BUILDTITLE --label org.opencontainers.image.description=$BUILDTITLE"
+      #Add ref.name for opencontainers
+      IMAGE_LABELS="$IMAGE_LABELS --label org.opencontainers.image.ref.name=$CI_REGISTRY_IMAGE:${CI_COMMIT_REF_NAME//\//_}"
+
+      #Build Version Label and Tag from git tag, LastVersionTagInGit was placed by a previous job artifact
+      if [[ "$VERSIONLABELMETHOD" == "LastVersionTagInGit" ]]; then VERSIONLABEL=$(cat VERSIONTAG.txt); fi
+      if [[ "$VERSIONLABELMETHOD" == "OnlyIfThisCommitHasVersion" ]]; then VERSIONLABEL=$CI_COMMIT_TAG; fi
+      if [[ ! -z "$VERSIONLABEL" ]]; then
+        IMAGE_LABELS="$IMAGE_LABELS --label org.opencontainers.image.version=$VERSIONLABEL"
+        ADDITIONALTAGLIST="$ADDITIONALTAGLIST $VERSIONLABEL"
+      fi
+
+      ADDITIONALTAGLIST="$ADDITIONALTAGLIST $CI_COMMIT_REF_NAME $CI_COMMIT_SHORT_SHA"
+      if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then ADDITIONALTAGLIST="$ADDITIONALTAGLIST latest"; fi
+      if [[ -n "$ADDITIONALTAGLIST" ]]; then
+        for TAG in $ADDITIONALTAGLIST; do
+          TAG=${TAG//\//_} # replace slashes with underscore in tag
+          FORMATTEDTAGLIST="${FORMATTEDTAGLIST} --tag $CI_REGISTRY_IMAGE:$TAG ";
+        done;
+      fi
+      if [[ -n "$ADDITIONALIMAGENAMES" ]]; then
+        for TAG in $ADDITIONALIMAGENAMES; do
+          FORMATTEDTAGLIST="${FORMATTEDTAGLIST} --tag $TAG ";
+        done;
+      fi
+
+      #Reformat Docker tags to kaniko's --destination argument:
+      FORMATTEDTAGLIST=$(echo "${FORMATTEDTAGLIST}" | sed s/\-\-tag/\-\-destination/g)
+
+      mkdir -p /kaniko/.docker
+      PROJECTDIR=$CI_PROJECT_DIR
+      if [[ ! -z "$SUB_DIRECTORY" ]]; then
+        PROJECTDIR=$CI_PROJECT_DIR/$SUB_DIRECTORY
+      fi
+      echo "{\"auths\":{\"$CI_REGISTRY\":{\"auth\":\"$(echo -n $CI_REGISTRY_USER:$CI_REGISTRY_PASSWORD | base64 | tr -d '\n')\"}}}" > /kaniko/.docker/config.json
+      /kaniko/executor --context $PROJECTDIR --dockerfile $PROJECTDIR/Dockerfile $FORMATTEDTAGLIST $IMAGE_LABELS
+
 test:
   stage: test
+  extends: .python
   script:
   - python setup.py test
 
 run:
   stage: bundle
+  extends: .python
   script:
   - python setup.py bdist_wheel
   # an alternative approach is to install and run:
@@ -49,6 +122,7 @@ run:
 
 pages:
   stage: deploy
+  extends: .python
   script:
   - pip install sphinx sphinx-rtd-theme
   - python setup.py build_sphinx
@@ -58,3 +132,15 @@ pages:
     - public
   only:
   - master
+
+build-and-deploy-docker-image:
+  stage: deploy
+  extends: .build-docker-image
+  variables:
+    CI_REGISTRY_IMAGE: psos-registry2.kenolej.de/psos/dbxref
+  only:
+    - master
+    - tags
+  needs:
+    - run
+
