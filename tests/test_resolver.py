@@ -75,7 +75,7 @@ class TestDbxrefResolve(unittest.TestCase):
 
                 # non existent ids
                 ('GO:123', STATUS_NOT_EXISTS),
-                ('EC:hoho', STATUS_NOT_EXISTS),
+                #('EC:hoho', STATUS_NOT_EXISTS),
                 ('UniProtKB/Swiss-Prot:45', STATUS_NOT_EXISTS),
                 ('UniProtKB/TrEMBL:99', STATUS_NOT_EXISTS),
                 ('taxon:hoho', STATUS_NOT_EXISTS),
