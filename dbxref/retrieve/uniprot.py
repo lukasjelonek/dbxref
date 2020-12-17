@@ -44,7 +44,7 @@ def retrieve(dbxrefs, basic=True, sequence=True, organism=True, annotation=True,
     for entry in resolved:
         xml_url = entry['locations']['xml'][0]
         logger.debug('URL: %s', xml_url)
-        retries = 3
+        retries = 10
         r = None
         while retries > 0 and r == None:
           try:
