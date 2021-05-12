@@ -37,10 +37,29 @@
   resources:
       html: [ "http://www.uniprot.org/uniprot/%i"]
       xml: [ "http://www.uniprot.org/uniprot/%i.xml"]
+      json: [ "http://www.uniprot.org/uniprot/%i.json"]
   check_existence: "http://www.uniprot.org/uniprot/%i.xml"
   retriever:
       type: 'internal'
       location: 'dbxref.retrieve.uniprot'
+- name: UniRef
+  prefixes: ["UniRef", "UniRef100", "UniRef90", "UniRef50"]
+  resources:
+      html: [ "http://www.uniprot.org/uniref/%i"]
+      xml: [ "http://www.uniprot.org/uniref/%i.xml"]
+      json: [ "http://www.uniprot.org/uniref/%i.json"]
+  check_existence: "http://www.uniprot.org/uniref/%i.xml"
+- name: COG
+  prefixes: ["COG"]
+  resources:
+    html: ["https://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=%i"]
+- name: UniParc
+  prefixes: ["UniParc"]
+  resources:
+      html: [ "http://www.uniprot.org/uniparc/%i"]
+      xml: [ "http://www.uniprot.org/uniparc/%i.xml"]
+      json: [ "http://www.uniprot.org/uniparc/%i.json"]
+  check_existence: "http://www.uniprot.org/uniparc/%i.xml"
 - name: Taxonomy
   prefixes: ["Taxon", "taxid"]
   resources:
@@ -148,6 +167,7 @@
 - name: RefSeq
   prefixes: ['RefSeq']
   resources:
+    html: ["https://www.ncbi.nlm.nih.gov/protein/%i/"]
     xml: ["https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&term=srcdb_refseq[property]&id=%i&retmode=xml",
     "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=protein&term=srcdb_refseq[property]&id=%i&retmode=xml"]
   retriever:
