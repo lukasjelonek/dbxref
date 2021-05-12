@@ -49,10 +49,6 @@
       xml: [ "http://www.uniprot.org/uniref/%i.xml"]
       json: [ "http://www.uniprot.org/uniref/%i.json"]
   check_existence: "http://www.uniprot.org/uniref/%i.xml"
-- name: COG
-  prefixes: ["COG"]
-  resources:
-    html: ["https://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=%i"]
 - name: UniParc
   prefixes: ["UniParc"]
   resources:
@@ -174,6 +170,6 @@
       type: 'internal'
       location: 'dbxref.retrieve.refseq'
 - name: Conserved domain database
-  prefixes: ["CDD"]
+  prefixes: ["CDD", "COG"]
   resources:
       html: ["https://www.ncbi.nlm.nih.gov/Structure/cdd/cddsrv.cgi?uid=%i"]
