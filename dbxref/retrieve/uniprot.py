@@ -35,13 +35,27 @@ def main():
     documents = retrieve(dbxrefs, basic=args.basic, sequence=args.sequence, organism=args.organism, annotation=args.annotation, features=args.features)
     print(json.dumps(documents))
 
+def lookup(xml_url, retries):
+  requests.get(xml_url)
+
 def retrieve(dbxrefs, basic=True, sequence=True, organism=True, annotation=True, features=True):
     resolved = dbxref.resolver.resolve(dbxrefs, check_existence=False)
     documents = []
     for entry in resolved:
         xml_url = entry['locations']['xml'][0]
         logger.debug('URL: %s', xml_url)
-        r = requests.get(xml_url)
+        retries = 10
+        r = None
+        while retries > 0 and r == None:
+          try:
+            r = requests.get(xml_url)
+            break
+          except requests.exceptions.SSLError:
+            retries = retries - 1
+            if retries > 0:
+              logger.warning("Request failed, retrying")
+            else:
+              raise
         logger.debug('Content: %s', r.text)
 
         output = {'id': entry['dbxref']}
