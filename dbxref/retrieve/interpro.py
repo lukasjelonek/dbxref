@@ -80,7 +80,7 @@ def retrieve(dbxrefs, basics=True, hierarchy=True, wikipedia=True, literature=Tr
             try:
                 output.update(wikipedia=ipro["metadata"]["wikipedia"])
             except KeyError:
-                logger.warning("Wikipedia articel were not available for the given entry.")
+                logger.warning("Wikipedia articles were not available for the given entry.")
         if literature:
             try:
                 output.update(literature=ipro["metadata"]["literature"])
